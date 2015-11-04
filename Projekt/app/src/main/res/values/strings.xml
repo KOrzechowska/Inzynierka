@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Projekt</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="imie">Wpisz imie</string>
+    <string name="nazwisko">Wpisz nazwisko</string>
+    <string name="wiek">Wpisz wiek</string>
+    <string name="pytanie1">Czy chodzi?</string>
+    <string name="pytanie2">Czy oddycha?</string>
+    <string name="pytanie3">Oddycha 8-30/min?</string>
+    <string name="pytanie4">Nawrót kapilarny poniżej 2 sec?</string>
+    <string name="pytanie5">Czy spełnia proste polecenia?</string>
+</resources>

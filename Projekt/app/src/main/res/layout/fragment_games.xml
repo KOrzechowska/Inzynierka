@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#ffffff" >
+
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+
+        android:id="@+id/tableLayout">
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="TRIAGE pytanie"
+                />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Odp"
+                />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie1"
+                android:id="@+id/text1"
+                android:visibility="visible"/>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="TAK"
+                android:textOn="NIE"
+                android:onClick="onToggleButtonClicked"
+
+                android:checked="false"
+                android:id="@+id/button1"
+                android:visibility="visible"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie2"
+                android:id="@+id/text2"
+                android:visibility="invisible"/>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="NIE"
+                android:textOn="TAK"
+                android:onClick="onToggleButtonClicked"
+                android:checked="false"
+                android:id="@+id/button2"
+                android:visibility="invisible"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie3"
+                android:id="@+id/text3"
+                android:visibility="invisible"/>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="NIE"
+                android:textOn="TAK"
+                android:onClick="onToggleButtonClicked"
+                android:checked="false"
+                android:id="@+id/button3"
+                android:visibility="invisible"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie4"
+                android:id="@+id/text4"
+                android:visibility="invisible"/>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="NIE"
+                android:textOn="TAK"
+                android:onClick="onToggleButtonClicked"
+                android:checked="false"
+                android:id="@+id/button4"
+                android:visibility="invisible"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie5"
+                android:id="@+id/text5"
+                android:visibility="invisible"/>
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="NIE"
+                android:textOn="TAK"
+                android:onClick="onToggleButtonClicked"
+                android:checked="false"
+                android:id="@+id/button5"
+                android:visibility="invisible"/>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+
+                />
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="NIE"
+                android:textOn="TAK"
+                android:onClick="onToggleButtonClicked"
+                android:checked="false"
+                android:id="@+id/button007" />
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button6"
+        android:layout_below="@+id/tableLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="67dp" />>
+</RelativeLayout>
