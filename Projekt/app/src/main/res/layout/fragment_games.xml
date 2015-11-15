@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#ffffff" >
+    >
 
 
     <TableLayout
@@ -36,16 +36,21 @@
                 android:id="@+id/text1"
                 android:visibility="visible"/>
 
-            <ToggleButton
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="TAK"
-                android:textOn="NIE"
-                android:onClick="onToggleButtonClicked"
+                android:orientation="horizontal"
+                android:id="@+id/rgCzyChodzi">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question1rb1" android:text="TAK"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question1rb2" android:text="NIE"/>
+            </RadioGroup>
 
-                android:checked="false"
-                android:id="@+id/button1"
-                android:visibility="visible"/>
         </TableRow>
         <TableRow>
             <TextView
@@ -54,18 +59,23 @@
                 android:singleLine="true"
                 android:layout_weight="1"
                 android:text="@string/pytanie2"
-                android:id="@+id/text2"
-                android:visibility="invisible"/>
+                android:id="@+id/text2" />
 
-            <ToggleButton
+
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="NIE"
-                android:textOn="TAK"
-                android:onClick="onToggleButtonClicked"
-                android:checked="false"
-                android:id="@+id/button2"
-                android:visibility="invisible"/>
+                android:orientation="horizontal"
+                android:id="@+id/rgCzyOddycha">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/question2rb1" android:text="TAK"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/question2rb2" android:text="NIE"/>
+            </RadioGroup>
         </TableRow>
         <TableRow>
             <TextView
@@ -74,18 +84,23 @@
                 android:singleLine="true"
                 android:layout_weight="1"
                 android:text="@string/pytanie3"
-                android:id="@+id/text3"
-                android:visibility="invisible"/>
+                android:id="@+id/text3" />
 
-            <ToggleButton
+
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="NIE"
-                android:textOn="TAK"
-                android:onClick="onToggleButtonClicked"
-                android:checked="false"
-                android:id="@+id/button3"
-                android:visibility="invisible"/>
+                android:orientation="horizontal"
+                android:id="@+id/rgQuestion3">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/question3rb1" android:text="TAK"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/question3rb2" android:text="NIE"/>
+            </RadioGroup>
         </TableRow>
         <TableRow>
             <TextView
@@ -94,18 +109,22 @@
                 android:singleLine="true"
                 android:layout_weight="1"
                 android:text="@string/pytanie4"
-                android:id="@+id/text4"
-                android:visibility="invisible"/>
+                android:id="@+id/text4" />
 
-            <ToggleButton
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="NIE"
-                android:textOn="TAK"
-                android:onClick="onToggleButtonClicked"
-                android:checked="false"
-                android:id="@+id/button4"
-                android:visibility="invisible"/>
+                android:orientation="horizontal"
+                android:id="@+id/rgQuestion4">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question4rb1" android:text="TAK"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question4rb2" android:text="NIE"/>
+            </RadioGroup>
         </TableRow>
         <TableRow>
             <TextView
@@ -114,18 +133,22 @@
                 android:singleLine="true"
                 android:layout_weight="1"
                 android:text="@string/pytanie5"
-                android:id="@+id/text5"
-                android:visibility="invisible"/>
-
-            <ToggleButton
+                android:id="@+id/text5" />
+            <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textOff="NIE"
-                android:textOn="TAK"
-                android:onClick="onToggleButtonClicked"
-                android:checked="false"
-                android:id="@+id/button5"
-                android:visibility="invisible"/>
+                android:orientation="horizontal"
+                android:id="@+id/rgQuestion5">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question5rb1" android:text="TAK"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question5rb2" android:text="NIE"/>
+            </RadioGroup>
+
         </TableRow>
         <TableRow>
             <TextView
@@ -136,14 +159,7 @@
 
                 />
 
-            <ToggleButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOff="NIE"
-                android:textOn="TAK"
-                android:onClick="onToggleButtonClicked"
-                android:checked="false"
-                android:id="@+id/button007" />
+
         </TableRow>
 
     </TableLayout>
@@ -155,5 +171,36 @@
         android:id="@+id/button6"
         android:layout_below="@+id/tableLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp" />>
+        android:layout_marginTop="67dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/textView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New RadioButton"
+        android:id="@+id/radioButton"
+        android:layout_below="@+id/button6"
+        android:layout_alignStart="@+id/button6" />
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="TAK"
+        android:textOn="NIE"
+        android:onClick="onToggleButtonClicked"
+
+        android:checked="false"
+        android:id="@+id/button1"
+        android:visibility="visible"
+        android:layout_alignBaseline="@+id/radioButton"
+        android:layout_alignBottom="@+id/radioButton"
+        android:layout_alignParentEnd="true" />>
 </RelativeLayout>

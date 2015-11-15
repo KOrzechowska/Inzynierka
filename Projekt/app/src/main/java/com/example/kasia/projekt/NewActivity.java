@@ -7,18 +7,22 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-
+import android.util.Log;
 
 /**
  * Created by kasia on 30.08.15.
  */
-public class NewActivity extends FragmentActivity implements ActionBar.TabListener{
+public class NewActivity extends FragmentActivity implements ActionBar.TabListener, TopRatedFragment.ToolbarListener{
 
     private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
     private ActionBar actionBar;
+   // public String firstName, lastName, age;
     // Tab titles
     private String[] tabs = {"Top Rated", "Games", "Movies"};
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +64,15 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             }
         });
         
+    }
+
+    public void onButtonClick(String firstname, String lastname, String Age) {
+        TopRatedFragment textFragment =
+                (TopRatedFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.fragment_top_rated);
+        Log.i("tekst1",firstname);
+        Log.i("tekst2",lastname);
+        Log.i("tekst3",Age);
     }
 
     @Override

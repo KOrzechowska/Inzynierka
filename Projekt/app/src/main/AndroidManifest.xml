@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".NewActivity"
-            android:label="NewActivity"></activity>
+            android:label="mTRIAGE"></activity>
     </application>
 
 </manifest>

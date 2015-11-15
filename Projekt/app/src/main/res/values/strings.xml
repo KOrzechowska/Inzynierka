@@ -1,11 +1,15 @@
 <resources>
-    <string name="app_name">Projekt</string>
+    <string name="app_name">mTRIAGE</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="imie">Wpisz imie</string>
     <string name="nazwisko">Wpisz nazwisko</string>
     <string name="wiek">Wpisz wiek</string>
+    <string name="hint_name">Imię</string>
+    <string name="hint_lastname">Nazwisko</string>
+    <string name="hint_age">Wiek</string>
+    <string name="buttonTekst">wprowadz</string>
     <string name="pytanie1">Czy chodzi?</string>
     <string name="pytanie2">Czy oddycha?</string>
     <string name="pytanie3">Oddycha 8-30/min?</string>
