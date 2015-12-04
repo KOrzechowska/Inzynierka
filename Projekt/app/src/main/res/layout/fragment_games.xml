@@ -44,11 +44,13 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/question1rb1" android:text="TAK"/>
+                    android:id="@+id/question1rb1" android:text="@string/tak"
+                    android:textColor="@color/text" />
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/question1rb2" android:text="NIE"/>
+                    android:id="@+id/question1rb2" android:text="@string/nie"
+                    android:textColor="@color/text"/>
             </RadioGroup>
 
         </TableRow>
@@ -70,11 +72,13 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/question2rb1" android:text="TAK"/>
+                android:id="@+id/question2rb1" android:text="@string/tak"
+                android:textColor="@color/text"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/question2rb2" android:text="NIE"/>
+                android:id="@+id/question2rb2" android:text="@string/nie"
+                android:textColor="@color/text"/>
             </RadioGroup>
         </TableRow>
         <TableRow>
@@ -95,11 +99,13 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/question3rb1" android:text="TAK"/>
+                android:id="@+id/question3rb1" android:text="@string/tak"
+                android:textColor="@color/text"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/question3rb2" android:text="NIE"/>
+                android:id="@+id/question3rb2" android:text="@string/nie"
+                android:textColor="@color/text"/>
             </RadioGroup>
         </TableRow>
         <TableRow>
@@ -119,11 +125,13 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/question4rb1" android:text="TAK"/>
+                    android:id="@+id/question4rb1" android:text="@string/tak"
+                    android:textColor="@color/text"/>
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/question4rb2" android:text="NIE"/>
+                    android:id="@+id/question4rb2" android:text="@string/nie"
+                    android:textColor="@color/text"/>
             </RadioGroup>
         </TableRow>
         <TableRow>
@@ -142,14 +150,94 @@
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/question5rb1" android:text="TAK"/>
+                    android:id="@+id/question5rb1" android:text="@string/tak"
+                    android:textColor="@color/text"/>
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/question5rb2" android:text="NIE"/>
+                    android:id="@+id/question5rb2" android:text="@string/nie"
+                    android:textColor="@color/text"/>
             </RadioGroup>
 
         </TableRow>
+        <!--<TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie5"
+                android:id="@+id/text6" />
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/rgQuestion6">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question6rb1" android:text="@string/tak"
+                    android:textColor="@color/text"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question6rb2" android:text="@string/nie"
+                    android:textColor="@color/text"/>
+            </RadioGroup>
+
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie5"
+                android:id="@+id/text7" />
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/rgQuestion7">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question7rb1" android:text="@string/tak"
+                    android:textColor="@color/text"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question7rb2" android:text="@string/nie"
+                    android:textColor="@color/text"/>
+            </RadioGroup>
+
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie5"
+                android:id="@+id/text8" />
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/rgQuestion8">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question8rb1" android:text="@string/tak"
+                    android:textColor="@color/text"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question5rb2" android:text="@string/nie"
+                    android:textColor="@color/text"/>
+            </RadioGroup>
+
+        </TableRow>-->
         <TableRow>
             <TextView
                 android:layout_width="wrap_content"
@@ -164,43 +252,25 @@
 
     </TableLayout>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button6"
-        android:layout_below="@+id/tableLayout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp" />
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        android:text=""
         android:id="@+id/textView"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
-    <RadioButton
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New RadioButton"
-        android:id="@+id/radioButton"
-        android:layout_below="@+id/button6"
-        android:layout_alignStart="@+id/button6" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/textView2"
+        android:layout_above="@+id/textView"
+        android:layout_alignParentStart="true" />
 
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="TAK"
-        android:textOn="NIE"
-        android:onClick="onToggleButtonClicked"
-
-        android:checked="false"
-        android:id="@+id/button1"
-        android:visibility="visible"
-        android:layout_alignBaseline="@+id/radioButton"
-        android:layout_alignBottom="@+id/radioButton"
-        android:layout_alignParentEnd="true" />>
+    >
 </RelativeLayout>

@@ -1,69 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#fa6a6a"
+
     android:id="@+id/fragment_top_rated">
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="60dp">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/input_layout_name"
+    <EditText
+        android:id="@+id/input_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <EditText
-            android:id="@+id/input_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:hint="@string/hint_name" />
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:hint="@string/hint_name"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/text"/>
 
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_lastname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/input_lastname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="@string/hint_lastname" />
-        </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_age"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-            <EditText
-                android:id="@+id/input_age"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="@string/hint_age" />
-        </android.support.design.widget.TextInputLayout>
+    <EditText
+        android:id="@+id/input_lastname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/hint_lastname"
+        android:textColor="@color/text"
+        android:layout_below="@+id/input_name"
+        android:layout_alignParentStart="true" />
 
-        <Button android:id="@+id/button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/buttonTekst"
-            android:background="@color/accent"
-            android:layout_marginTop="40dp"
-            android:textColor="@android:color/white"/>
 
-    </LinearLayout>
+
+
+   <!-- <EditText
+        android:id="@+id/input_age"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="@string/hint_age"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" /> -->
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/sex"
+        android:layout_below="@+id/input_lastname"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="44dp">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:id="@+id/women_rbn"
+            android:text="@string/women"
+            android:textColor="@drawable/rbtn_textcolor_selector"
+            android:background="@drawable/rbtn_selector"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:id="@+id/men_rbn"
+            android:text="@string/men"
+            android:textColor="@drawable/rbtn_textcolor_selector"
+            android:background="@drawable/rbtn2_selector" />
+    </RadioGroup>
+
+    <Button android:id="@+id/button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/buttonTekst"
+        android:background="@color/accent"
+        android:textColor="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="104dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_above="@+id/button"
+        android:layout_alignEnd="@+id/sex" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="zrób zdjęcie"
+        android:id="@+id/button3"
+        android:layout_alignBottom="@+id/sex"
+        android:layout_toEndOf="@+id/imageView" />
 
 
     <!--  <Button
@@ -75,8 +102,4 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="162dp" />-->
-
-
-
-
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

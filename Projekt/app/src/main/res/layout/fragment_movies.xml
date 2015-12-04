@@ -1,14 +1,196 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/fragment_movies"
+    android:background="@mipmap/ic_checkboxmen">
 
     <TextView android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Design Movies Screen"
         android:textSize="20dp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:id="@+id/tekstCentrum"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p1"
+        android:layout_marginStart="86dp"
+        android:layout_marginTop="28dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:checked="false"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t1"
+        android:layout_alignTop="@+id/p1"
+        android:layout_toEndOf="@+id/t2"
+        android:checked="false"
+
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p2"
+        android:layout_below="@+id/p1"
+        android:layout_alignEnd="@+id/p1"
+        android:layout_marginEnd="35dp"
+        android:layout_marginTop="55dp"
+
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t2"
+        android:layout_alignTop="@+id/p2"
+        android:layout_toEndOf="@+id/p3"
+        android:layout_marginStart="79dp"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p5"
+        android:layout_above="@+id/tekstCentrum"
+        android:layout_toStartOf="@+id/p7"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t5"
+        android:layout_marginStart="23dp"
+        android:layout_above="@+id/tekstCentrum"
+        android:layout_toEndOf="@+id/p6"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p4"
+        android:layout_above="@+id/p5"
+        android:layout_alignStart="@+id/p1"
+        />
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p7"
+        android:layout_marginTop="31dp"
+        android:layout_below="@+id/tekstCentrum"
+        android:layout_toStartOf="@+id/p4"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p8"
+        android:layout_above="@+id/p9"
+        android:layout_toEndOf="@+id/p2"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p9"
+        android:layout_below="@+id/p7"
+        android:layout_alignStart="@+id/p7"
+        android:layout_marginTop="51dp"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p10"
+        android:layout_alignTop="@+id/p9"
+        android:layout_alignStart="@+id/p8"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p3"
+        android:layout_alignTop="@+id/t2"
+        android:layout_toEndOf="@+id/p4"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t3"
+        android:layout_alignTop="@+id/p3"
+        android:layout_alignStart="@+id/t1"
+        android:layout_marginStart="35dp"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/p6"
+        android:checked="false"
+        android:layout_above="@+id/tekstCentrum"
+        android:layout_toEndOf="@+id/p8"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t4"
+        android:checked="false"
+        android:layout_above="@+id/p6"
+        android:layout_alignStart="@+id/t1"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t6"
+        android:checked="false"
+        android:layout_above="@+id/tekstCentrum"
+        android:layout_toEndOf="@+id/t3"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t7"
+        android:checked="false"
+        android:layout_alignTop="@+id/p8"
+        android:layout_toEndOf="@+id/t5"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t9"
+        android:checked="false"
+        android:layout_alignTop="@+id/p10"
+        android:layout_alignStart="@+id/t7"
+        
+        android:nestedScrollingEnabled="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t10"
+        android:checked="false"
+        android:layout_alignTop="@+id/t9"
+        android:layout_toEndOf="@+id/t4"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/t8"
+        android:checked="false"
+        android:layout_alignTop="@+id/t7"
+        android:layout_alignStart="@+id/t10"
+        />
 
 
 </RelativeLayout>

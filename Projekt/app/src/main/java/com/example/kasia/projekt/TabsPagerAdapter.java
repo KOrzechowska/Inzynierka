@@ -1,16 +1,23 @@
 package com.example.kasia.projekt;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 /**
  * Created by kasia on 30.08.15.
  */
 public class TabsPagerAdapter extends FragmentPagerAdapter {
 
-    public TabsPagerAdapter(FragmentManager fm) {
+
+    private Bundle bundleF;
+    private boolean isAdult;
+    public TabsPagerAdapter(FragmentManager fm, Boolean dane) {
         super(fm);
+        isAdult = dane;
+        Log.i("przesyłam dane", String.valueOf(isAdult));
     }
 
     @Override
@@ -19,13 +26,22 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         switch (index) {
             case 0:
                 // Top Rated fragment activity
+                Log.i("przesyłam 1", "1");
                return new TopRatedFragment();
             case 1:
                 // Games fragment activity
-                return new GamesFragment();
+                Log.i("przesyłam 1", "2");
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("iAT",isAdult);
+                GamesFragment gamesFragment = new GamesFragment();
+                gamesFragment.setArguments(bundle);
+                return gamesFragment;
             case 2:
+                Log.i("przesyłam 1", "3");
                 // Movies fragment activity
-                return new MoviesFragment();
+                DetailsFragment detailsFragment = new DetailsFragment();
+                //moviesFragment.setArguments(bundleF);
+                return detailsFragment;
         }
 
         return null;
@@ -36,4 +52,9 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         // get item count - equal to number of tabs
         return 3;
     }
+
+    public void setArgument (Bundle bundle){
+        bundleF = bundle;
+    }
+
 }

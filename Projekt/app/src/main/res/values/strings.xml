@@ -12,7 +12,20 @@
     <string name="buttonTekst">wprowadz</string>
     <string name="pytanie1">Czy chodzi?</string>
     <string name="pytanie2">Czy oddycha?</string>
-    <string name="pytanie3">Oddycha 8-30/min?</string>
+    <string name="pytanie2cd">Oddech powrócił?</string>
+    <string name="pytanie3">Oddech 8-30/min?</string>
+    <string name="pytanie3cd">Tętno obecne?</string>
     <string name="pytanie4">Nawrót kapilarny poniżej 2 sec?</string>
     <string name="pytanie5">Czy spełnia proste polecenia?</string>
+    <string name="tak">TAK</string>
+    <string name="nie">NIE</string>
+    <string name="men">MĘŻCZYZNA</string>
+    <string name="women">KOBIETA</string>
+    <string name="longitude">długość geograficzna</string>
+    <string name="latitude">szerokość geograficzna</string>
+    <string name="rozmiar">rozmiar</string>
+    <string name="małe">małe</string>
+    <string name="średnie">średnie</string>
+    <string name="duże">duże</string>
+    <string name="opis">opis zdarzenia</string>
 </resources>

@@ -1,5 +1,14 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" android:showAsAction="never" />
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Single menu.xml item
+         Set id, icon and Title for each menu.xml item
+    -->
+    <item android:id="@+id/menu_dataBase"
+        android:icon="@mipmap/ic_menu_database"
+        android:title="Data Base" />
+
+    <item android:id="@+id/menu_save"
+        android:icon="@mipmap/ic_menu_save"
+        android:title="Save" />
+
 </menu>

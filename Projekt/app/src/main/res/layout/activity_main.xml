@@ -5,19 +5,105 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
-    <ImageButton
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true"
-        android:src="@mipmap/ic_launcher"/>
 
-    <ImageButton
+        android:id="@+id/tableLayout">
+
+        <TableRow></TableRow>
+        <TableRow
+            android:minHeight="120px">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="@string/longitude"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:id="@+id/longitude"
+                android:text="długość" />
+        </TableRow>
+
+        <TableRow
+            android:minHeight="120px">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/latitude" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/latitude"
+                android:text="szerokosc"
+                />
+        </TableRow>
+        <TableRow
+            android:minHeight="120px">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rozmiar"/>
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/incidentSize">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/small"
+                    android:text="@string/małe"
+                    android:textColor="@color/text"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/middle"
+                    android:text="@string/średnie"
+                    android:textColor="@color/text"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/big"
+                    android:text="@string/duże"
+                    android:textColor="@color/text"/>
+            </RadioGroup>
+        </TableRow>
+        <TableRow
+            android:minHeight="120px">
+           
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/description"
+                android:hint="@string/opis"
+                android:textColor="@color/text"
+                />
+        </TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tekst1"
+            android:text="tekst"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tekst2"
+            android:text="tekst"/>
+
+    </TableLayout>
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton2"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:src="@mipmap/ic_launcher"/>
+        android:text="New Button"
+        android:id="@+id/button2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/tableLayout"
+        android:layout_marginBottom="59dp" />
+
+
 </RelativeLayout>
