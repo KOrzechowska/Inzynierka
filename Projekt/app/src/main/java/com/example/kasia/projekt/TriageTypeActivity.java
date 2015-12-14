@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 public class TriageTypeActivity extends Activity  {
     private boolean isAdult = true; // domyślnie aplikacja dla dorosłego pacjenta
     TextView tekst1, tekst2, tekst3;
+    int incidentDBid;
    /* LocationManager lm;
     Criteria kr;
     Location loc;
@@ -31,16 +33,24 @@ public class TriageTypeActivity extends Activity  {
     public void reakcja(){
         Intent i = new Intent(this, NewActivity.class);
         i.putExtra("isAdult",isAdult);
+        i.putExtra("incidentId",incidentDBid);
         startActivity(i);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.triage_type_activity);
 
-        ImageButton b = (ImageButton) findViewById(R.id.imageButton);
-        ImageButton b2 = (ImageButton) findViewById(R.id.imageButton2);
-        Context = getApplicationContext();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            incidentDBid = extras.getInt("incidentId");
+
+            Log.i("index",String.valueOf(incidentDBid));
+
+            ImageButton b = (ImageButton) findViewById(R.id.imageButton);
+            ImageButton b2 = (ImageButton) findViewById(R.id.imageButton2);
+            Context = getApplicationContext();
 
        /* tekst1 = (TextView) findViewById(R.id.textView3);
         tekst2 = (TextView) findViewById(R.id.textView4);
@@ -59,25 +69,26 @@ public class TriageTypeActivity extends Activity  {
             tekst3.setText("szerokość geograficzna = " + loc.getLatitude());
         }*/
 
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isAdult = false; // dziecko
-                reakcja();
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isAdult = false; // dziecko
+                    reakcja();
 
-            }
-        });
-        b2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isAdult = true; // dziecko
-                reakcja();
+                }
+            });
+            b2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isAdult = true; // dziecko
+                    reakcja();
 
-            }
-        });
+                }
+            });
+        }
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         MenuInflater menuInflater = getMenuInflater();
@@ -89,7 +100,7 @@ public class TriageTypeActivity extends Activity  {
      * Event Handling for Individual menu item selected
      * Identify single menu item by it's id
      * */
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
 
@@ -109,7 +120,7 @@ public class TriageTypeActivity extends Activity  {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
+    }*/
 
    /* @Override
     public void onLocationChanged(Location location) {

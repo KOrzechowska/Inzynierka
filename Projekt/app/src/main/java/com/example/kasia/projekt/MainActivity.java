@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,41 +27,72 @@ import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class MainActivity extends Activity implements LocationListener {
 
+    /**
+     * logowanie - zmienne
+     * db - uchwyt do bazy danych SQLite session - zarządzanie sesją
+     */
+    private SQLiteHandler db;
+    private SessionManager session;
+    private TextView txtName;
+    private TextView txtEmail;
+
+    String pid;
+
     // Progress Dialog
     private ProgressDialog pDialog;
 
+    // JSON parser class
     JSONParser jsonParser = new JSONParser();
+    JSONObject product;
+
+    // single product url
+    private static final String url_incident_details = "http://kasia.mszulc.eu/get_incident.php";
+
+    // JSON Node names
+
+    private static final String TAG_INCIDENT = "zdarzenie";
+    private static final String TAG_LONGITUDE = "longitude";
+    private static final String TAG_LATITUDE = "name";
+    private static final String TAG_ID = "incidentId";
+    private static final String TAG_DESCRIPTION = "description";
+
 
     // url to create new product
-    private static String url_create_incident = "http://mszulc.eu/create_incident.php";
+    private static String url_create_incident = "http://kasia.mszulc.eu/create_incident.php";
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
 
-    TextView dlugosc, szerokosc, tekst1, tekst2;
+    TextView dlugosc, szerokosc, tekst1, tekst2, idZdarzenieTextV;
     EditText opis;
     Button button2;
     RadioGroup rozmiar;
     RadioButton maly, sredni, duzy;
-    String size, description, longitude, latitude;
+    String size, description, idZdarzenie;
+    Double latitude, longitude;
     LocationManager lm;
     Criteria kr;
     Location loc;
     String dostawca = null;
     Context Context;
+    Boolean incidentExist;
+    int incidentId=8;
+    ImageButton createIncident;
 
     public void reakcja() {
         Intent i = new Intent(this, TriageTypeActivity.class);
-        //i.putExtra("isAdult",isAdult);
+        i.putExtra("incidentId",incidentId);
         startActivity(i);
     }
 
@@ -69,11 +101,39 @@ public class MainActivity extends Activity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         Context = getApplicationContext();
+
+        txtName = (TextView) findViewById(R.id.name);
+        txtEmail = (TextView) findViewById(R.id.email);
+
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
+
+        // session manager
+        session = new SessionManager(getApplicationContext());
+
+        if (!session.isLoggedIn()) {
+            logoutUser();
+        }
+
+        // Fetching user details from sqlite
+        HashMap<String, String> user = db.getUserDetails();
+
+        String name = user.get("name");
+        String email = user.get("email");
+
+        // Displaying the user details on the screen
+        txtName.setText(name);
+        txtEmail.setText(email);
 
         dlugosc = (TextView) findViewById(R.id.longitude);
         szerokosc = (TextView) findViewById(R.id.latitude);
         opis = (EditText) findViewById(R.id.description);
+        idZdarzenieTextV = (TextView) findViewById(R.id.textView6);
+
+
         description = opis.getText().toString();
         tekst1 = (TextView) findViewById(R.id.tekst1);
         tekst2 = (TextView) findViewById(R.id.tekst2);
@@ -116,7 +176,42 @@ public class MainActivity extends Activity implements LocationListener {
         if (loc != null) {
             dlugosc.setText("długość geograficzna = " + loc.getLongitude());
             szerokosc.setText("szerokość geograficzna = " + loc.getLatitude());
+            longitude = loc.getLongitude();
+            latitude = loc.getLatitude();
+        } else dlugosc.setText("nie ma wartosci!!");
+
+        createIncident = (ImageButton) findViewById(R.id.createIncident);
+        // getting product details from intent
+        //Intent i = getIntent();
+
+        // getting product id (pid) from intent
+        //pid = i.getStringExtra(TAG_ID);
+
+        // Getting complete product details in background thread
+        new GetProductDetails().execute();
+        idZdarzenieTextV.setText(idZdarzenie);
+        if(idZdarzenie==null){
+            Toast.makeText(MainActivity.this, "To zdarzenie nie jest zarejestrowane", Toast.LENGTH_SHORT).show();
         }
+        else{
+            Toast.makeText(MainActivity.this,"idZdarzenia = "+idZdarzenie,Toast.LENGTH_SHORT ).show();
+        }
+        /**
+         * obsługa guzika createIncident
+         * jeśli nie ma takie zdarzenia w bazie i rozmiar zdarzenia jest uzupełniony
+         * znana jest długość i szerokość geograficzna
+         * to stwórz zdarzenie
+         */
+        createIncident.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (idZdarzenie==null && size!=null && longitude!=null && latitude!=null)
+                    new CreateNewProduct().execute();
+                else
+                    Toast.makeText(MainActivity.this, "Can not create new incident", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -145,6 +240,11 @@ public class MainActivity extends Activity implements LocationListener {
                 Toast.makeText(MainActivity.this, "Save is Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
+            case R.id.menu_logout:
+                Toast.makeText(MainActivity.this, "Logout", Toast.LENGTH_SHORT).show();
+                logoutUser();
+                return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -154,16 +254,19 @@ public class MainActivity extends Activity implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
 
+        Log.i("lokalizacja", "jestem gps");
         dostawca = lm.getBestProvider(kr, true);
         loc = lm.getLastKnownLocation(dostawca);
 
         tekst1.setText("najlepszy dostawca " + dostawca);
         tekst2.setText("" + lm.isProviderEnabled(dostawca));
 
-        //if (loc!=null) {
-        dlugosc.setText("długość geograficzna = " + loc.getLongitude());
-        szerokosc.setText("szerokość geograficzna = " + loc.getLatitude());
-        //}
+        if (loc != null) {
+            dlugosc.setText(String.valueOf(loc.getLongitude()));
+            szerokosc.setText(String.valueOf(loc.getLatitude()));
+            longitude = loc.getLongitude();
+            latitude = loc.getLatitude();
+        } else dlugosc.setText("wciaz nie ma");
     }
 
     @Override
@@ -213,7 +316,7 @@ public class MainActivity extends Activity implements LocationListener {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(getApplicationContext());
+            pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Creating Incident..");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
@@ -226,9 +329,10 @@ public class MainActivity extends Activity implements LocationListener {
         protected String doInBackground(String... args) {
 
             // Building Parameters
+            Log.i("longitudeDB",String.format("%.4f",longitude));
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("longitude", dlugosc.getText().toString()));
-            params.add(new BasicNameValuePair("latitude", szerokosc.getText().toString()));
+            params.add(new BasicNameValuePair("longitude", String.format("%.4f",longitude)));
+            params.add(new BasicNameValuePair("latitude", String.format("%.4f",latitude)));
             params.add(new BasicNameValuePair("size", size));
             params.add(new BasicNameValuePair("description", description));
 
@@ -271,4 +375,106 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
     }
+
+    /**
+     * Background Async Task to Get complete product details
+     */
+    class GetProductDetails extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Loading product details. Please wait...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        /**
+         * Getting product details in background thread
+         */
+        protected String doInBackground(String... params) {
+
+            // updating UI from Background Thread
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    // Check for success tag
+                    int success;
+                    try {
+                        // Building Parameters
+                        Log.i("longitude",String.format("%.4f", longitude));
+                        List<NameValuePair> params = new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("longitude", String.format("%.4f", longitude)));
+                        params.add(new BasicNameValuePair("latitude", String.format("%.4f", latitude)));
+
+                        // getting product details by making HTTP request
+                        // Note that product details url will use GET request
+                        JSONObject json = jsonParser.makeHttpRequest(
+                                url_incident_details, "POST", params);
+
+                        // check your log for json response
+                        Log.d("Single Product Details", json.toString());
+
+                        // json success tag
+                        success = json.getInt(TAG_SUCCESS);
+                        if (success == 1) {
+                            // successfully received product details
+                            JSONArray productObj = json
+                                    .getJSONArray(TAG_INCIDENT); // JSON Array
+
+                            // get first product object from JSON Array
+                            product = productObj.getJSONObject(0);
+
+                            // product with this pid found
+                            // Edit Text
+                               //  idZdarzenieTextV.setText(product.getString(TAG_ID));
+                            idZdarzenie=product.getString(TAG_ID);
+
+                                Log.i("idZdarznie",idZdarzenie);
+
+
+                        } else {
+                            // product with pid not foundF
+                            Log.i("idZdarznie","nie ma zdarzenia takiego");
+                            //incidentExist=false;
+                            //new CreateNewProduct().execute();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            return null;
+        }
+        /**
+     * After completing background task Dismiss the progress dialog
+     * *
+     */
+    protected void onPostExecute(String file_url) {
+        // dismiss the dialog once done
+        pDialog.dismiss();
+    }
+    }
+
+    /**
+     * Logging out the user. Will set isLoggedIn flag to false in shared
+     * preferences Clears the user data from sqlite users table
+     * */
+    private void logoutUser() {
+        session.setLogin(false);
+
+        db.deleteUsers();
+
+        // Launching the login activity
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
+
+

@@ -37,6 +37,7 @@ public class JSONParser {
 
     // function get json from url
     // by making HTTP POST or GET mehtod
+    @SuppressWarnings("deprecation")
     public JSONObject makeHttpRequest(String url, String method,
                                       List<NameValuePair> params) {
 

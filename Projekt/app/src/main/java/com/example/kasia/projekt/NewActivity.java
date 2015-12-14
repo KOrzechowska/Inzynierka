@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.MifareClassic;
@@ -51,7 +52,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     JSONParser jsonParser = new JSONParser();
 
     // url to create new product
-    private static String url_create_product = "http://mszulc.eu/create_patient.php";
+    private static String url_create_product = "http://kasia.mszulc.eu/create_patient.php";
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
    // public FragmentCommunicator fragmentCommunicator;
@@ -62,6 +63,8 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     private String firstName, lastName;
     private boolean isAdultTriage;
     private String triageStatus;
+    private String patientPhoto = null;
+    private int incidentId;
     // Tab titles
     private String[] tabs = {"Dane osobowe", "pytanie TRIAGE", "Dodatkowe informacje"};
 
@@ -77,6 +80,8 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isAdultTriage = extras.getBoolean("isAdult");
+            incidentId = extras.getInt("incidentId");
+            Log.i("incidentId",String.valueOf(incidentId));
         }
         //Bundle bundle = new Bundle();
         //bundle.putString("isAdult",String.valueOf(isPatientMen));
@@ -168,16 +173,18 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         }
         return out;
     }*/
-    public void OnFragmentInteraction(String imie, String nazwisko, String plec) {
+    public void OnFragmentInteraction(String imie, String nazwisko, String plec, String bitmap) {
         TopRatedFragment textFragment =
                 (TopRatedFragment)
                         getSupportFragmentManager().findFragmentById(R.id.fragment_top_rated);
         Log.i("tekst1", imie);
         Log.i("tekst2",nazwisko);
         Log.i("tekst3", plec);
+        Log.i("tekst4",String.valueOf(bitmap.length()));
         firstName = imie;
         lastName = nazwisko;
         sex=plec; // kobieta lub mężczyzna
+        patientPhoto = bitmap;
 
     }
 
@@ -240,7 +247,10 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         Log.i("tekst4",triageStatus+firstName+lastName+sex);
         fragment_context = fragmentContext;
         //creating new product in background thread
+        if (patientPhoto!=null)
         new CreateNewProduct().execute();
+        else Log.i("zdjecie","gdzie ono");
+
     }
 
     /**
@@ -263,6 +273,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     /**
      * Creating product
      */
+    @SuppressWarnings("deprecation")
     protected String doInBackground(String... args) {
 
         // Building Parameters
@@ -271,6 +282,8 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         params.add(new BasicNameValuePair("lastName", lastName));
         params.add(new BasicNameValuePair("sex", sex));
         params.add(new BasicNameValuePair("triageStatus", triageStatus));
+        params.add(new BasicNameValuePair("patientPhoto", patientPhoto));
+        params.add(new BasicNameValuePair("incidentId", String.valueOf(incidentId)));
 
         // getting JSON Object
         // Note that create product url accepts POST method

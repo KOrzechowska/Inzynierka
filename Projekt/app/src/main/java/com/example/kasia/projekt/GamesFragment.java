@@ -54,7 +54,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
 
 
     // url to create new product
-    private static String url_create_product = "http://mszulc.eu/create_patient.php";
+    private static String url_create_product = "http://kasia.mszulc.eu/create_patient.php";
     boolean Adult;
     private Bundle b;
     // JSON Node names
@@ -68,6 +68,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
     RadioGroup radioGroup1, radioGroup2, radioGroup3, radioGroup4, radioGroup5, radioGroup6, radioGroup7, radioGroup8;
     RadioButton rb1t, rb1n, rb2t, rb2n, rb3t, rb3n, rb4t, rb4n, rb5t, rb5n, rb6t, rb6n, rb7t, rb7n, rb8t, rb8n;
     String triageStatus; // [3]- zielony [2]- żółty [1]- czerwony [0]- czarny
+    int triagePath = 0;
     String imie, nazwisko;
     Boolean plec;
 
@@ -192,6 +193,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     triageStatus = "GREEN"; // [3]- zielony
                     Toast.makeText(getActivity(), "chodzi- TRIAGE=zielony", Toast.LENGTH_SHORT).show();
                     wynikTriage.setText("TRIAGE = " + triageStatus);
+                    triagePath = 1;
                     activityCommunicator.passDataToActivity(triageStatus, context);
                     // creating new product in background thread
                     //new CreateNewProduct().execute();
@@ -242,14 +244,17 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     widokWierszy(true, true, true, false, false, false, false, false);
                     triageStatus = "RED"; // [1]- czerwony
                     if (!triageKind & !czyOddycha) { // jeśli dziecko i nie oddychało
+                        triagePath = 7;
                         Toast.makeText(getActivity(), "oddech spontaniczny TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
-                    } else
-                        Toast.makeText(getActivity(), "oddech < 8-30/min TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
+                    } else{
+                        triagePath = 2;
+                        Toast.makeText(getActivity(), "oddech < 8-30/min TRIAGE=czerwony", Toast.LENGTH_SHORT).show();}
                     wynikTriage.setText("TRIAGE = " + triageStatus);
                     activityCommunicator.passDataToActivity(triageStatus, context);
                 } else if (checkedId == R.id.question3rb2) {
                     //NIE- pojawia się kolejne pytanei o nawrót kapilarny
                     if (triageKind & !czyOddycha) { // jeśli dorosły i nie oddychał
+                        triagePath = 6;
                         widokWierszy(true, true, true, false, false, false, false, false); // koniec gałęzi
                         triageStatus = "BLACK"; // [0]- czarny
                         Toast.makeText(getActivity(), "TRIAGE=czarny", Toast.LENGTH_SHORT).show();
@@ -287,9 +292,11 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     widokWierszy(true, true, true, true, false, false, false, false);
                     if (!triageKind & !czyOddycha) {
                         triageStatus = "BLACK"; // [0]- czarny
+                        triagePath = 8;
                         Toast.makeText(getActivity(), "brak tętna TRIAGE=czarny", Toast.LENGTH_SHORT).show();
                     } else {
                         triageStatus = "RED"; //[1]-czerwony
+                        triagePath = 3;
                         Toast.makeText(getActivity(), "nawrót >2sec TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
                     }
 
@@ -311,9 +318,11 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     widokWierszy(true, true, true, true, true, false, false, false);
                     if (!triageKind & !czyOddycha) {
                         triageStatus = "RED"; // [1]- czerwony
+                        triagePath = 9;
                         Toast.makeText(getActivity(), "oddech spontaniczny, TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
                     } else {
                         triageStatus = "YELLOW"; // [2]- zolty
+                        triagePath = 4;
                         Toast.makeText(getActivity(), "świadomy, TRIAGE=żółty", Toast.LENGTH_SHORT).show();
                     }
                     wynikTriage.setText("TRIAGE = " + triageStatus);
@@ -324,9 +333,11 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     widokWierszy(true, true, true, true, true, false, false, false);
                     if (!triageKind & !czyOddycha) {
                         triageStatus = "BLACK"; // [0]- czarny
+                        triagePath = 10;
                         Toast.makeText(getActivity(), "brak tętna, TRIAGE=czarny", Toast.LENGTH_SHORT).show();
                     } else {
                         triageStatus = "RED"; // [1]- czerwony
+                        triagePath = 5;
                         Toast.makeText(getActivity(), "nie świadomy, TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
 
                     }
