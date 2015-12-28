@@ -32,6 +32,7 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
     Paint paint;
     private boolean glowaP = false, reka2P = false, reka1P = false, brzuch = false, glowaT = false, reka1T = false, reka2T = false,
         plecy=false, noga1T=false,noga2T=false;
+    Bitmap bitmapa;
    // public Context context;
 
     //private String napis;
@@ -48,13 +49,10 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_szczegoly, container, false);
+        Log.i("e3","start-e3");
         //napis = getArguments().getString("isAdult");
         //tekst = (TextView) rootView.findViewById(R.id.tekstCentrum);
         //tekst.setText(napis)
-
-
-
-
 
         imageView = (ImageView)rootView.findViewById(R.id.image);
         img = (ImageView) rootView.findViewById(R.id.image_areas);
@@ -93,7 +91,7 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
 
     @Override public void onResume() {
         super.onResume();
-
+        //imageView.setImageBitmap(bitmapa);
         /*View v  = findViewById (R.id.wglxy_bar);
         if (v != null) {
             Animation anim1 = AnimationUtils.loadAnimation(this, R.anim.fade_in);
@@ -221,7 +219,7 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
 
     public void rysuj(int x, int y){
         imageView.setDrawingCacheEnabled(true);
-        Bitmap bitmapa = Bitmap.createBitmap(imageView.getDrawingCache());
+        bitmapa = Bitmap.createBitmap(imageView.getDrawingCache());
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setColor(Color.RED);

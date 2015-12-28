@@ -23,7 +23,7 @@ import android.widget.Toast;
 public class TriageTypeActivity extends Activity  {
     private boolean isAdult = true; // domyślnie aplikacja dla dorosłego pacjenta
     TextView tekst1, tekst2, tekst3;
-    int incidentDBid;
+    String incidentDBid, rescuerDBid;
    /* LocationManager lm;
     Criteria kr;
     Location loc;
@@ -34,6 +34,7 @@ public class TriageTypeActivity extends Activity  {
         Intent i = new Intent(this, NewActivity.class);
         i.putExtra("isAdult",isAdult);
         i.putExtra("incidentId",incidentDBid);
+        i.putExtra("rescuerId",rescuerDBid);
         startActivity(i);
     }
 
@@ -44,9 +45,10 @@ public class TriageTypeActivity extends Activity  {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            incidentDBid = extras.getInt("incidentId");
+            incidentDBid = extras.getString("incidentId");
+            rescuerDBid = extras.getString("rescuerId");
 
-            Log.i("index",String.valueOf(incidentDBid));
+            Log.i("index",String.valueOf(incidentDBid));}
 
             ImageButton b = (ImageButton) findViewById(R.id.imageButton);
             ImageButton b2 = (ImageButton) findViewById(R.id.imageButton2);
@@ -85,7 +87,7 @@ public class TriageTypeActivity extends Activity  {
 
                 }
             });
-        }
+
     }
 
    /* @Override

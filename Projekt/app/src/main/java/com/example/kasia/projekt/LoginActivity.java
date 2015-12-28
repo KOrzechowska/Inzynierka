@@ -124,13 +124,14 @@ public class LoginActivity extends Activity {
                         String email = user.getString("email");
                         String created_at = user
                                 .getString("created_at");
-
+                        String id = jObj.getString("id");
                         // Inserting row in users table
                         db.addUser(name, email, uid, created_at);
 
                         // Launch main activity
                         Intent intent = new Intent(LoginActivity.this,
                                 MainActivity.class);
+                        intent.putExtra("id",id);
                         startActivity(intent);
                         finish();
                     } else {

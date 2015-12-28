@@ -64,6 +64,7 @@ public class TopRatedFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_top_rated, container, false);
+        Log.i("e1","start-e1");
        // inputLayout1 = (TextInputLayout) rootView.findViewById(R.id.input_layout_name);
        // inputLayout2 = (TextInputLayout) rootView.findViewById(R.id.input_layout_lastname);
        // inputLayout3 = (TextInputLayout) rootView.findViewById(R.id.input_layout_age);

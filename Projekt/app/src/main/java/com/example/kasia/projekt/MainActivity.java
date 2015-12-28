@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements LocationListener {
     private TextView txtName;
     private TextView txtEmail;
 
-    String pid;
+    String pid, rescuerId;
 
     // Progress Dialog
     private ProgressDialog pDialog;
@@ -56,6 +56,8 @@ public class MainActivity extends Activity implements LocationListener {
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     JSONObject product;
+
+
 
     // single product url
     private static final String url_incident_details = "http://kasia.mszulc.eu/get_incident.php";
@@ -92,7 +94,11 @@ public class MainActivity extends Activity implements LocationListener {
 
     public void reakcja() {
         Intent i = new Intent(this, TriageTypeActivity.class);
-        i.putExtra("incidentId",incidentId);
+        if(idZdarzenie!="0")
+        i.putExtra("incidentId",idZdarzenie); // dane te są potrzebne do stworzenia rekordu w tabeli
+        else
+        Log.i("idZdarzenia2","gdzie te id");
+        i.putExtra("rescuerId",rescuerId);   // patients oraz triage
         startActivity(i);
     }
 
@@ -104,6 +110,13 @@ public class MainActivity extends Activity implements LocationListener {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         Context = getApplicationContext();
+
+        // odebranie danych od aktywności logowanie - nr id ratownika - zalogowanego
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            rescuerId = extras.getString("id");
+        }
+
 
         txtName = (TextView) findViewById(R.id.name);
         txtEmail = (TextView) findViewById(R.id.email);
@@ -134,7 +147,6 @@ public class MainActivity extends Activity implements LocationListener {
         idZdarzenieTextV = (TextView) findViewById(R.id.textView6);
 
 
-        description = opis.getText().toString();
         tekst1 = (TextView) findViewById(R.id.tekst1);
         tekst2 = (TextView) findViewById(R.id.tekst2);
         rozmiar = (RadioGroup) findViewById(R.id.incidentSize);
@@ -206,8 +218,11 @@ public class MainActivity extends Activity implements LocationListener {
             @Override
             public void onClick(View v) {
 
-                if (idZdarzenie==null && size!=null && longitude!=null && latitude!=null)
+                if (idZdarzenie==null && size!=null && longitude!=null && latitude!=null){
+                    description = opis.getText().toString(); // pobranie opisu wydarzenia
                     new CreateNewProduct().execute();
+                    new GetProductDetails().execute();
+                    idZdarzenieTextV.setText(idZdarzenie);}
                 else
                     Toast.makeText(MainActivity.this, "Can not create new incident", Toast.LENGTH_SHORT).show();
             }
@@ -230,13 +245,13 @@ public class MainActivity extends Activity implements LocationListener {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.menu_dataBase:
+            case R.id.menu_createNew:
                 // Single menu item is selected do something
                 // Ex: launching new activity/screen or show alert message
                 Toast.makeText(MainActivity.this, "Bookmark is Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
-            case R.id.menu_save:
+            case R.id.menu_updateOne:
                 Toast.makeText(MainActivity.this, "Save is Selected", Toast.LENGTH_SHORT).show();
                 return true;
 
@@ -328,6 +343,7 @@ public class MainActivity extends Activity implements LocationListener {
          */
         protected String doInBackground(String... args) {
 
+            Log.i("opis",description);
             // Building Parameters
             Log.i("longitudeDB",String.format("%.4f",longitude));
             List<NameValuePair> params = new ArrayList<NameValuePair>();

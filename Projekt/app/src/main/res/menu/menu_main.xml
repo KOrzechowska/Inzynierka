@@ -3,13 +3,12 @@
     <!-- Single menu.xml item
          Set id, icon and Title for each menu.xml item
     -->
-    <item android:id="@+id/menu_dataBase"
-        android:icon="@mipmap/ic_menu_database"
-        android:title="Data Base" />
+    <item android:id="@+id/menu_createNew"
+        android:title="Create Patient" />
 
-    <item android:id="@+id/menu_save"
+    <item android:id="@+id/menu_updateOne"
         android:icon="@mipmap/ic_menu_save"
-        android:title="Save" />
+        android:title="Edit patient" />
 
     <item android:id="@+id/menu_logout"
         android:icon="@mipmap/ic_menu_save"
