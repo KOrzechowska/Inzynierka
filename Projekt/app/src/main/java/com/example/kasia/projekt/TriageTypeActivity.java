@@ -24,6 +24,7 @@ public class TriageTypeActivity extends Activity  {
     private boolean isAdult = true; // domyślnie aplikacja dla dorosłego pacjenta
     TextView tekst1, tekst2, tekst3;
     String incidentDBid, rescuerDBid;
+    private Boolean CreateFlag;
    /* LocationManager lm;
     Criteria kr;
     Location loc;
@@ -31,10 +32,12 @@ public class TriageTypeActivity extends Activity  {
     android.content.Context Context;
 
     public void reakcja(){
+        CreateFlag = true; // flag to create new patient
         Intent i = new Intent(this, NewActivity.class);
         i.putExtra("isAdult",isAdult);
         i.putExtra("incidentId",incidentDBid);
         i.putExtra("rescuerId",rescuerDBid);
+        i.putExtra("createFlag", CreateFlag);
         startActivity(i);
     }
 

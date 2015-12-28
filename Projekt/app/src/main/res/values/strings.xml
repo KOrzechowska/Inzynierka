@@ -40,4 +40,12 @@
     <string name="welcome">Welcome</string>
     <string name="btn_logout">LOGOUT</string>
     <string name="name">Fullname</string>
+    <!-- Aler Dialog -->
+    <string name="for_create">Dodać nowego pacjenta?</string>
+    <string name="create_message">Pojawi się nowy formularz z możliwością wprowadzenia kolejnego poszkodowanego.</string>
+    <string name="add">DODAJ</string>
+    <string name="cancel">ANULUJ</string>
+    <string name="for_edit">Zmienić status istniejącego pacjenta?</string>
+    <string name="edit_message">Pojawi się formularz z możliwością zmian statusu danego pacjenta</string>
+    <string name="edit">ZMIEŃ</string>
 </resources>

@@ -2,10 +2,12 @@ package com.example.kasia.projekt;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -28,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +50,7 @@ import java.util.UUID;
  */
 public class NewActivity extends FragmentActivity implements ActionBar.TabListener, TopRatedFragment.OnFragmentInteractionListener,GamesFragment.ActivityCommunicator {
 
-    String nfcID = UUID.randomUUID().toString(); // TODO: NFC tag UID
+    String nfcID = null;
 
     Context fragment_context;
     // Progress Dialog
@@ -66,7 +69,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     private int AddPatientSuccess;
     // url to get patient details
     private static String url_patient_details = "http://kasia.mszulc.eu/get_patient.php";
-    private String idPatient; // patient id from database
+
     private static final String TAG_TRIAGE = "triage";
     private static final String TAG_TRIAGE_ID = "triageID";
     private  static final String TAG_TRIAGE_RESCUER_ID = "rescuerID";
@@ -75,6 +78,14 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     // JSON Node names
     private static  final String TAG_ID = "pid";
     private  static final String TAG_PATIENT = "patient";
+    private static final String TAG_FIRSTNAME = "firstName";
+    private static final String TAG_LASTNAME = "lastName";
+    private static final String TAG_SEX = "sex";
+    private static final String TAG_PHOTO = "patientPhoto";
+
+    private Boolean EditFlag = false, CreateFlag, EditTriageStatus = false;
+    private String idPatient, namePatient, lastNamePatient, sexPatient, photoPatient; // patient id from database
+
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
    // public FragmentCommunicator fragmentCommunicator;
@@ -90,7 +101,18 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     // Tab titles
     private String[] tabs = {"Dane osobowe", "pytanie TRIAGE", "Dodatkowe informacje"};
 
-
+    // list of NFC technologies detected:
+    private final String[][] techList = new String[][] {
+            new String[] {
+                    NfcA.class.getName(),
+                    NfcB.class.getName(),
+                    NfcF.class.getName(),
+                    NfcV.class.getName(),
+                    IsoDep.class.getName(),
+                    MifareClassic.class.getName(),
+                    MifareUltralight.class.getName(), Ndef.class.getName()
+            }
+    };
 
 
 
@@ -105,6 +127,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             isAdultTriage = extras.getBoolean("isAdult");
             incidentId = extras.getString("incidentId");
             rescuerId = extras.getString("rescuerId");
+            CreateFlag = extras.getBoolean("createFlag");
             Log.i("rescuerID",rescuerId);
             Log.i("incidentId",incidentId);
         }
@@ -154,7 +177,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     @Override
     public void onResume() {
         super.onResume();
-      /*  // creating pending intent:
+       // creating pending intent:
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
         // creating intent receiver for NFC events:
         IntentFilter filter = new IntentFilter();
@@ -163,23 +186,23 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         filter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
         // enabling foreground dispatch for getting intent from NFC event:
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, this.techList);*/
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, this.techList);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         // disabling foreground dispatch:
-       /* NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.disableForegroundDispatch(this);*/
+       NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.disableForegroundDispatch(this);
     }
 
-    /*@Override
+    @Override
     protected void onNewIntent(Intent intent) {
         if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-            ((TextView)findViewById(R.id.text)).setText(
-                    "NFC Tag\n" +
-                            ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID)));
+            nfcID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+            ((TextView)findViewById(R.id.textView2)).setText(
+                    "NFC Tag\n" + nfcID);
         }
     }
 
@@ -197,7 +220,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             out += hex[i];
         }
         return out;
-    }*/
+    }
     public void OnFragmentInteraction(String imie, String nazwisko, String plec, String bitmap) {
         TopRatedFragment textFragment =
                 (TopRatedFragment)
@@ -247,14 +270,31 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(NewActivity.this);
 
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.menu_createNew:
                 // Single menu item is selected do something
                 // launching mainactivity screen - wybór dziecko czy dorosły
                 Toast.makeText(NewActivity.this, "Create new patient", Toast.LENGTH_SHORT).show();
-                createNextPatient();
+
+                alertDialog.setTitle(R.string.for_create);
+                alertDialog.setMessage(R.string.create_message);
+                alertDialog.setIcon(R.mipmap.ic_add_patient);
+                alertDialog.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditFlag = false; // gdy dodajemy pacjenta to nie jest to edytowanie
+                        createNextPatient();
+                    }
+                });
+                alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
                 return true;
 
             case R.id.menu_updateOne:
@@ -264,9 +304,23 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
                 intent.putExtra("isAdult", isAdultTriage);
                 intent.putExtra("rescuerId", rescuerId);
                 startActivity(intent);*/
-                TextView textFragment1 = (TextView)findViewById(R.id.input_name);
-                getPatient();
-                textFragment1.setText("Jarosław");
+                alertDialog.setTitle(R.string.for_edit);
+                alertDialog.setMessage(R.string.edit_message);
+                alertDialog.setIcon(R.mipmap.ic_edit_patient);
+                alertDialog.setPositiveButton(R.string.edit, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        CreateFlag = false; // gdy edytujemy pacjenta to nie dodajemy pacjenta
+                        getPatient();
+                    }
+                });
+                alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
                 return true;
 
             default:
@@ -279,14 +333,18 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         triagePath = someValue;
         Log.i("tekst4",triagePath+firstName+lastName+sex);
         fragment_context = fragmentContext;
-        //creating new product in background thread
-        if (patientPhoto!=null){
+        //creating new patient in background thread
+        // conditions: photo, createFlag == true, and TODO: NFC tag ID
+        if (patientPhoto!=null & CreateFlag == true & nfcID != null){
             new CreateNewPatient().execute();
             Log.i("nfcID1:", nfcID);
             new GetPatientDetails().execute();
-            Toast.makeText(fragment_context,idPatient,Toast.LENGTH_SHORT).show(); // prezentacja ID pacjenta
         }
         else Log.i("zdjecie","gdzie ono");
+        if(EditTriageStatus == true){
+            Toast.makeText(fragment_context,"stwórz rekord",Toast.LENGTH_SHORT).show();
+            new AddNewTriageRecord().execute();
+        }
 
     }
 
@@ -403,6 +461,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
                     try {
                         // Building Parameters
                         Log.i("nfcID", nfcID);
+                        //nfcID = "40402B6C";
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
                         params.add(new BasicNameValuePair("nfcID", nfcID));
 
@@ -424,17 +483,19 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
                             // get first product object from JSON Array
                             patientDetails = productObj.getJSONObject(0);
 
-                            // product with this pid found
-                            // Edit Text
-                            //  idZdarzenieTextV.setText(product.getString(TAG_ID));
-                            idPatient=patientDetails.getString(TAG_ID);
+                            // patient details extracted from DB
+                            idPatient = patientDetails.getString(TAG_ID);
+                            namePatient = patientDetails.getString(TAG_FIRSTNAME);
+                            lastNamePatient = patientDetails.getString(TAG_LASTNAME);
+                            sexPatient = patientDetails.getString(TAG_SEX);
+                            photoPatient = patientDetails.getString(TAG_PHOTO);
 
-                            Log.i("idPatient",idPatient);
+                            Log.i("idPatient", idPatient);
 
 
                         } else {
                             // product with pid not foundF
-                            Log.i("idPatient","nie ma zdarzenia takiego");
+                            Log.i("idPatient", "nie ma zdarzenia takiego");
                             //incidentExist=false;
                             //new CreateNewProduct().execute();
                         }
@@ -451,10 +512,30 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
          * *
          */
         protected void onPostExecute(String file_url) {
+            //nfcID = null;
             // dismiss the dialog once done
            // pDialog.dismiss();
             Log.i("patientID from GET", idPatient);
-            new AddNewTriageRecord().execute();
+            Log.i("create flag", CreateFlag.toString());
+            if(EditFlag){
+                TextView firstName_textFragment1 = (TextView)findViewById(R.id.input_name);
+                TextView lastName_textFragment1 = (TextView)findViewById(R.id.input_lastname);
+                firstName_textFragment1.setText(namePatient);
+                lastName_textFragment1.setText(lastNamePatient);
+                RadioGroup rgQ1_Fragment2 = (RadioGroup)findViewById(R.id.rgCzyChodzi);
+                RadioGroup rgQ2_Fragment2 = (RadioGroup)findViewById(R.id.rgCzyOddycha);
+                RadioGroup rgQ3_Fragment2 = (RadioGroup)findViewById(R.id.rgQuestion3);
+                RadioGroup rgQ4_Fragment2 = (RadioGroup)findViewById(R.id.rgQuestion4);
+                RadioGroup rgQ5_Fragment2 = (RadioGroup)findViewById(R.id.rgQuestion5);
+                rgQ1_Fragment2.clearCheck();
+                rgQ2_Fragment2.clearCheck();
+                rgQ3_Fragment2.clearCheck();
+                rgQ4_Fragment2.clearCheck();
+                rgQ5_Fragment2.clearCheck();
+                EditTriageStatus = true;
+            }else if(CreateFlag){
+                new AddNewTriageRecord().execute();
+            }
         }
     }
 
@@ -528,6 +609,9 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             // AddPatientSuccess=1;
             // dismiss the dialog once done
             pDialog.dismiss();
+            CreateFlag = false; // utworzono pacjenta - aby wybrać kolejnego nalezy skorzystać z menu
+            EditFlag = false; // dodano nowy rekod dla pacjenta
+            EditTriageStatus = false;
             new GetLastTriageDetails().execute();
         }
 
@@ -563,7 +647,6 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
                     int success;
                     try {
                         // Building Parameters
-                        Log.i("nfcID", nfcID);
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
                         params.add(new BasicNameValuePair("pid", idPatient));
 
@@ -632,6 +715,13 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     }
 
     private void getPatient(){
+
+        if(nfcID == null){
+            Toast.makeText(NewActivity.this, "Przyłóż tag NFC", Toast.LENGTH_LONG).show();
+        }else {
+            EditFlag = true; // flag to edit patient triage status
+            new GetPatientDetails().execute(); // pobranie parametrów pacjenta o danym NFCID
+        }
 
     }
 
