@@ -26,7 +26,7 @@
                 android:text="Odp"
                 />
         </TableRow>
-        <TableRow>
+        <TableRow android:minHeight="60dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,23 +34,27 @@
                 android:layout_weight="1"
                 android:text="@string/pytanie1"
                 android:id="@+id/text1"
-                android:visibility="visible"/>
+                android:visibility="visible"
+                android:textSize="26dp"/>
+        </TableRow>
+
+        <TableRow android:minHeight="60dp">
 
             <RadioGroup
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
                 android:orientation="horizontal"
-                android:id="@+id/rgCzyChodzi">
+                android:id="@+id/rgCzyChodzi"
+                android:weightSum="1">
                 <RadioButton
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/question1rb1" android:text="@string/tak"
+                    android:layout_height="match_parent"
+                    android:id="@+id/question1rb1"
                     android:textColor="@color/text" />
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/question1rb2" android:text="@string/nie"
-                    android:textColor="@color/text"/>
+                    android:id="@+id/question1rb2"
+                    android:textColor="@color/text" />
             </RadioGroup>
 
         </TableRow>
@@ -60,9 +64,11 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie2"
-                android:id="@+id/text2" />
+                android:text="@string/pytanie2" android:textSize="26dp"
+                android:id="@+id/text2"  />
+        </TableRow>
 
+        <TableRow android:minHeight="60px">
 
             <RadioGroup
                 android:layout_width="wrap_content"
@@ -87,10 +93,12 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie3"
+                android:text="@string/pytanie3" android:textSize="26sp"
                 android:id="@+id/text3" />
 
+        </TableRow>
 
+        <TableRow android:minHeight="60px">
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -114,9 +122,11 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie4"
+                android:text="@string/pytanie4" android:textSize="26sp"
                 android:id="@+id/text4" />
+        </TableRow>
 
+        <TableRow android:minHeight="60px">
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -140,8 +150,11 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie5"
+                android:text="@string/pytanie5" android:textSize="26dp"
                 android:id="@+id/text5" />
+        </TableRow>
+
+        <TableRow android:minHeight="60px">
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -271,6 +284,7 @@
         android:id="@+id/textView2"
         android:layout_above="@+id/textView"
         android:layout_alignParentStart="true" />
+
 
     >
 </RelativeLayout>

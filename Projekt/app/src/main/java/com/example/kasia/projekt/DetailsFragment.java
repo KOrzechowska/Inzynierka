@@ -7,11 +7,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +24,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /**
  * Created by kasia on 29.08.15.
@@ -33,6 +39,9 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
     private boolean glowaP = false, reka2P = false, reka1P = false, brzuch = false, glowaT = false, reka1T = false, reka2T = false,
         plecy=false, noga1T=false,noga2T=false;
     Bitmap bitmapa;
+    ArrayList<int[]> list;
+    Pair glowaPwsp;
+    int [] glowaWsp;
    // public Context context;
 
     //private String napis;
@@ -50,9 +59,12 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
 
         View rootView = inflater.inflate(R.layout.fragment_szczegoly, container, false);
         Log.i("e3","start-e3");
+
+
         //napis = getArguments().getString("isAdult");
         //tekst = (TextView) rootView.findViewById(R.id.tekstCentrum);
         //tekst.setText(napis)
+        list = new ArrayList<int[]>();
 
         imageView = (ImageView)rootView.findViewById(R.id.image);
         img = (ImageView) rootView.findViewById(R.id.image_areas);
@@ -60,7 +72,8 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
         if (imageView != null) {
             imageView.setOnTouchListener(this);
 
-        }
+        }else {Log.i("obraz", "nie ma");}
+
        // addOnClickListener(rootView);
         /*Bitmap canvasBitmap = Bitmap.createBitmap(50,50, Bitmap.Config.ARGB_8888);
         Paint paint = new Paint();
@@ -128,10 +141,10 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
         }
     }
 
+
     @Override
     public boolean onTouch(View v, MotionEvent ev) {
         boolean handledHere = false;
-
 
         final int evX = (int) ev.getX();
         final int evY = (int) ev.getY();
@@ -146,7 +159,13 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
                 Toast.makeText(getActivity(),"czerwony",Toast.LENGTH_SHORT).show();
                 if (!glowaP) { // jesli jeszcze głowy nie zaznaczono
                     rysuj(evX, evY);
+                    glowaWsp = new int [2];
+                    glowaWsp[0] = evX; glowaWsp[1] = evY;
+                    list.add(glowaWsp);
                     glowaP = true;
+                }else{
+                    //canvas.drawCircle(evX, evY, 40, PorterDuff.Mode.CLEAR);
+                    //glowaP = false;
                 }
             }
             else if (ct.closeMatch (Color.BLUE, touchColor, tolerance)) {
@@ -218,6 +237,7 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
     }
 
     public void rysuj(int x, int y){
+        Log.i("punkty",String.valueOf(x)+" "+String.valueOf(y));
         imageView.setDrawingCacheEnabled(true);
         bitmapa = Bitmap.createBitmap(imageView.getDrawingCache());
         paint = new Paint();
@@ -230,7 +250,6 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
         imageView.setAdjustViewBounds(true);
         imageView.setImageBitmap(bitmapa);
     }
-
 
 
 

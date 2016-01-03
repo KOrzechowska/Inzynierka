@@ -195,7 +195,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     Toast.makeText(getActivity(), "chodzi- TRIAGE=zielony", Toast.LENGTH_SHORT).show();
                     wynikTriage.setText("TRIAGE = " + triageStatus);
                     triagePath = "1";
-                    activityCommunicator.passDataToActivity(triagePath, context);
+                    activityCommunicator.passDataToActivity(triagePath,triageStatus, context);
                     // creating new product in background thread
                     //new CreateNewProduct().execute();
                 } else if (checkedId == R.id.question1rb2) {
@@ -251,7 +251,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         triagePath = "2";
                         Toast.makeText(getActivity(), "oddech < 8-30/min TRIAGE=czerwony", Toast.LENGTH_SHORT).show();}
                     wynikTriage.setText("TRIAGE = " + triageStatus);
-                    activityCommunicator.passDataToActivity(triagePath, context);
+                    activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
                 } else if (checkedId == R.id.question3rb2) {
                     //NIE- pojawia się kolejne pytanei o nawrót kapilarny
                     if (triageKind & !czyOddycha) { // jeśli dorosły i nie oddychał
@@ -260,7 +260,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         triageStatus = "BLACK"; // [0]- czarny
                         Toast.makeText(getActivity(), "TRIAGE=czarny", Toast.LENGTH_SHORT).show();
                         wynikTriage.setText("TRIAGE = " + triageStatus);
-                        activityCommunicator.passDataToActivity(triagePath, context);
+                        activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
                     } else if (!triageKind & !czyOddycha) {
                         tekst4.setText(R.string.pytanie3cd);
                         widokWierszy(true, true, true, true, false, false, false, false);
@@ -302,7 +302,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     }
 
                     wynikTriage.setText("TRIAGE = " + triageStatus);
-                    activityCommunicator.passDataToActivity(triagePath, context);
+                    activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
                 }
             }
         });
@@ -327,7 +327,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         Toast.makeText(getActivity(), "świadomy, TRIAGE=żółty", Toast.LENGTH_SHORT).show();
                     }
                     wynikTriage.setText("TRIAGE = " + triageStatus);
-                    activityCommunicator.passDataToActivity(triagePath, context);
+                    activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
 
                 } else if (checkedId == R.id.question5rb2) {
                     //NIE- nieświadomy
@@ -343,7 +343,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
 
                     }
                     wynikTriage.setText("TRIAGE = " + triageStatus);
-                    activityCommunicator.passDataToActivity(triagePath, context);
+                    activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
 
                 }
             }
@@ -456,7 +456,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
 
 
     public interface ActivityCommunicator{
-        public void passDataToActivity(String someValue, Context fragmentContext);
+        public void passDataToActivity(String someValue, String priority, Context fragmentContext);
     }
    /* @Override
     public void passDataToFragment(String firstName, String lastName, Boolean sex, Boolean someValue) {

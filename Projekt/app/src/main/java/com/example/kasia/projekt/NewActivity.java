@@ -135,6 +135,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         //bundle.putString("isAdult",String.valueOf(isPatientMen));
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setOffscreenPageLimit(2);
         actionBar = getActionBar();
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager(),isAdultTriage);
         //mAdapter.setArgument(bundle);
@@ -159,8 +160,8 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
                 // on changing the page
                 // make respected tab selected
                 actionBar.setSelectedNavigationItem(position);
-               // if(fragmentCommunicator != null)
-                 //   fragmentCommunicator.passDataToFragment(firstName, lastName, sex, isAdultTriage);
+                // if(fragmentCommunicator != null)
+                //   fragmentCommunicator.passDataToFragment(firstName, lastName, sex, isAdultTriage);
             }
 
             @Override
@@ -199,10 +200,21 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+        if (patientPhoto!=null & CreateFlag == true & intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
             nfcID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             ((TextView)findViewById(R.id.textView2)).setText(
                     "NFC Tag\n" + nfcID);
+            new CreateNewPatient().execute();
+            Log.i("nfcID1:", nfcID);
+            new GetPatientDetails().execute();
+        }
+        if(EditFlag == true & intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+
+            nfcID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+            ((TextView)findViewById(R.id.textView2)).setText(
+                    "NFC Tag\n" + nfcID);
+
+            new GetPatientDetails().execute(); // pobranie parametrów pacjenta o danym NFCID
         }
     }
 
@@ -329,16 +341,18 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     }
 
     @Override
-    public void passDataToActivity(String someValue, Context fragmentContext) {
+    public void passDataToActivity(String someValue, String priority, Context fragmentContext) {
         triagePath = someValue;
         Log.i("tekst4",triagePath+firstName+lastName+sex);
         fragment_context = fragmentContext;
         //creating new patient in background thread
         // conditions: photo, createFlag == true, and TODO: NFC tag ID
         if (patientPhoto!=null & CreateFlag == true & nfcID != null){
-            new CreateNewPatient().execute();
+
+            Toast.makeText(NewActivity.this,"Priorytet poszkodowanego: "+priority + "\n"+R.string.nfcTag,Toast.LENGTH_LONG).show();
+            // new CreateNewPatient().execute();
             Log.i("nfcID1:", nfcID);
-            new GetPatientDetails().execute();
+            //new GetPatientDetails().execute();
         }
         else Log.i("zdjecie","gdzie ono");
         if(EditTriageStatus == true){
@@ -512,7 +526,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
          * *
          */
         protected void onPostExecute(String file_url) {
-            //nfcID = null;
+            nfcID = null;
             // dismiss the dialog once done
            // pDialog.dismiss();
             Log.i("patientID from GET", idPatient);
@@ -716,12 +730,9 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
 
     private void getPatient(){
 
-        if(nfcID == null){
-            Toast.makeText(NewActivity.this, "Przyłóż tag NFC", Toast.LENGTH_LONG).show();
-        }else {
             EditFlag = true; // flag to edit patient triage status
-            new GetPatientDetails().execute(); // pobranie parametrów pacjenta o danym NFCID
-        }
+            //new GetPatientDetails().execute(); // pobranie parametrów pacjenta o danym NFCID
+        Toast.makeText(NewActivity.this,R.string.nfcTag,Toast.LENGTH_LONG).show();
 
     }
 

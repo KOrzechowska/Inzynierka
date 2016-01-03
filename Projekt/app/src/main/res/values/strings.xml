@@ -29,6 +29,8 @@
     <string name="duże">duże</string>
     <string name="opis">opis zdarzenia</string>
     <string name="nowe_zdarzenie">Dodaj zdarzenie</string>
+    <string name="uwagi">Wpisz komentarz</string>
+    <string name="enter">Wprowadź</string>
 
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
@@ -46,6 +48,7 @@
     <string name="add">DODAJ</string>
     <string name="cancel">ANULUJ</string>
     <string name="for_edit">Zmienić status istniejącego pacjenta?</string>
-    <string name="edit_message">Pojawi się formularz z możliwością zmian statusu danego pacjenta</string>
+    <string name="edit_message">Pojawi się formularz z możliwością zmian statusu danego pacjenta. Zbliż tag NFC.</string>
+    <string name="nfcTag">Zbliż odpowiedni tag NFC</string>
     <string name="edit">ZMIEŃ</string>
 </resources>
