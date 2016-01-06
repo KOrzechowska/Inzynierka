@@ -12,6 +12,13 @@
 
         android:id="@+id/tableLayout">
         <TableRow android:minHeight="60dp">
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Odp"
+                android:textSize="26dp"
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -20,27 +27,9 @@
                 android:text="TRIAGE pytanie"
                 android:textSize="26dp"
                 />
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:text="Odp"
-                android:textSize="26dp"
-                />
         </TableRow>
         <TableRow android:minHeight="60dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:layout_weight="1"
-                android:text="@string/pytanie1"
-                android:id="@+id/text1"
-                android:visibility="visible"
-                android:textSize="22dp"/>
-
             <RadioGroup
-
                 android:orientation="horizontal"
                 android:id="@+id/rgCzyChodzi"
                 android:weightSum="1">
@@ -59,71 +48,74 @@
                     android:button="@drawable/custom_radio_button"
                     android:text="@string/nie"/>
             </RadioGroup>
-
-        </TableRow>
-        <TableRow android:minHeight="60dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie2" android:textSize="22dp"
-                android:id="@+id/text2"  />
+                android:text="@string/pytanie1"
+                android:id="@+id/text1"
+                android:visibility="visible"
+                android:gravity="right"
+                android:textSize="22dp"/>
+
+        </TableRow>
+        <TableRow android:minHeight="60dp">
 
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/rgCzyOddycha">
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/question2rb1" android:text="@string/tak"
-                android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/question2rb2" android:text="@string/nie"
-                android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question2rb1" android:text="@string/tak"
+                    android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question2rb2" android:text="@string/nie"
+                    android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
             </RadioGroup>
-        </TableRow>
-        <TableRow android:minHeight="60dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie3" android:textSize="22dp"
-                android:id="@+id/text3" />
+                android:text="@string/pytanie2"
+                android:gravity="right"                 android:textSize="22dp"
+                android:id="@+id/text2"  />
+        </TableRow>
+        <TableRow android:minHeight="60dp">
             
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/rgQuestion3">
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/question3rb1" android:text="@string/tak"
-                android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/question3rb2" android:text="@string/nie"
-                android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question3rb1" android:text="@string/tak"
+                    android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/question3rb2" android:text="@string/nie"
+                    android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
             </RadioGroup>
-        </TableRow>
-        <TableRow android:minHeight="60dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie4"
-                android:lines="2"
-                android:textSize="22dp"
-                android:id="@+id/text4" />
-        
+                android:text="@string/pytanie3"
+                android:gravity="right"                 android:textSize="22dp"
+                android:id="@+id/text3" />
+        </TableRow>
+        <TableRow android:minHeight="60dp">
+            
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -140,16 +132,18 @@
                     android:id="@+id/question4rb2" android:text="@string/nie"
                     android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
             </RadioGroup>
-        </TableRow>
-        <TableRow android:minHeight="60dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/pytanie5" android:textSize="22dp"
-                android:id="@+id/text5" />
-        
+                android:text="@string/pytanie4"
+                android:lines="2"
+                android:gravity="right"                 android:textSize="22dp"
+                android:id="@+id/text4" />
+        </TableRow>
+        <TableRow android:minHeight="60dp">
+
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -166,6 +160,14 @@
                     android:id="@+id/question5rb2" android:text="@string/nie"
                     android:textColor="@color/text"  android:button="@drawable/custom_radio_button"/>
             </RadioGroup>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="1"
+                android:text="@string/pytanie5"
+                android:gravity="right"                 android:textSize="22dp"
+                android:id="@+id/text5" />
 
         </TableRow>
         <!--<TableRow android:minHeight="60dp">

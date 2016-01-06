@@ -48,11 +48,15 @@ import java.util.UUID;
 /**
  * Created by kasia on 30.08.15.
  */
-public class NewActivity extends FragmentActivity implements ActionBar.TabListener, TopRatedFragment.OnFragmentInteractionListener,GamesFragment.ActivityCommunicator {
+public class NewActivity extends FragmentActivity implements ActionBar.TabListener, TopRatedFragment.OnFragmentInteractionListener,GamesFragment.ActivityCommunicator, DetailsFragment.ActivityCommunicator {
+
+
+    private SessionManager session; // session - przechowywanie na zew informacji o użytkowniku
+    private SQLiteHandler db; // android baza SQLite
 
     String nfcID = null;
 
-    Context fragment_context;
+    Context fragment_context, detailsFragment_context;
     // Progress Dialog
     private ProgressDialog pDialog;
 
@@ -69,9 +73,13 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     private int AddPatientSuccess;
     // url to get patient details
     private static String url_patient_details = "http://kasia.mszulc.eu/get_patient.php";
+    // url to update triage record
+    private static String url_update_triage = "http://kasia.mszulc.eu/update_triage.php";
 
     private static final String TAG_TRIAGE = "triage";
     private static final String TAG_TRIAGE_ID = "triageID";
+    private static final String TAG_TRIAGE_PHOTO = "details";
+    private static final String TAG_TRIAGE_COMMENT = "comment";
     private  static final String TAG_TRIAGE_RESCUER_ID = "rescuerID";
     private static final String TAG_TRIAGE_PATH_ID = "triage_pathID";
     String triageID;
@@ -83,7 +91,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     private static final String TAG_SEX = "sex";
     private static final String TAG_PHOTO = "patientPhoto";
 
-    private Boolean EditFlag = false, CreateFlag, EditTriageStatus = false;
+    private Boolean EditFlag = false, CreateFlag, EditTriageStatus = false, triageCompleted = false;
     private String idPatient, namePatient, lastNamePatient, sexPatient, photoPatient; // patient id from database
 
     // JSON Node names
@@ -95,7 +103,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     private String sex ; // M- mężczyzna K- kobieta
     private String firstName, lastName;
     private boolean isAdultTriage; // czy poszkodowany jest dorosły czy jest dzieckiem
-    private String triagePath;
+    private String triagePath, detailsPhoto, detailsComment;
     private String patientPhoto = null;
     private String incidentId, rescuerId;
     // Tab titles
@@ -114,30 +122,43 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             }
     };
 
-
+    /**
+     * funkcja wywoływana przy tworzenie tej aktywności
+     * session, db - w celu obsługi wylogowania (wylogowanie z sesji i czyszczenie db)
+     * extras - zawiera parametry odebrane z poprzednich aktywności dla fragmentów NewActivity
+     *          i dla insertów do bazy
+     * @param savedInstanceState
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.new_activity);
         Log.i("new activity", "start");
-
+        Boolean isLeftHanded; // wykorzystywane tylko do przesłania dalej do fragmentu z pytaniami
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             isAdultTriage = extras.getBoolean("isAdult");
+            isLeftHanded = extras.getBoolean("isLeft");
             incidentId = extras.getString("incidentId");
             rescuerId = extras.getString("rescuerId");
             CreateFlag = extras.getBoolean("createFlag");
             Log.i("rescuerID",rescuerId);
             Log.i("incidentId",incidentId);
         }
+        else isLeftHanded = false; // domyślnie jest praworęczny uzytkownik
+        // session manager
+        session = new SessionManager(getApplicationContext());
+        // SqLite database handler
+        db = new SQLiteHandler(getApplicationContext());
+
         //Bundle bundle = new Bundle();
         //bundle.putString("isAdult",String.valueOf(isPatientMen));
         // Initilization
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(2);
         actionBar = getActionBar();
-        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(),isAdultTriage);
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(),isAdultTriage, isLeftHanded);
         //mAdapter.setArgument(bundle);
 
         viewPager.setAdapter(mAdapter);
@@ -334,12 +355,22 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
                 });
                 alertDialog.show();
                 return true;
+            case R.id.menu_logout:
+                Toast.makeText(NewActivity.this, "Logout", Toast.LENGTH_SHORT).show();
+                logoutUser();
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    /**
+     *
+     * @param someValue
+     * @param priority
+     * @param fragmentContext
+     */
     @Override
     public void passDataToActivity(String someValue, String priority, Context fragmentContext) {
         triagePath = someValue;
@@ -359,6 +390,25 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             Toast.makeText(fragment_context,"stwórz rekord",Toast.LENGTH_SHORT).show();
             new AddNewTriageRecord().execute();
         }
+
+    }
+
+    /**
+     * Dane przesłane z fragmentu details fragment
+     * @param someValue - zdjęcie szczegółów
+     * @param comment - komentarz ratownika
+     * @param fragmentContext - context fragmentu
+     */
+    @Override
+    public void passDataToNewActivity(String someValue,String comment,  Context fragmentContext) {
+        detailsFragment_context = fragmentContext;
+        detailsPhoto = someValue;
+        detailsComment = comment;
+        Log.i("detailsPhoto", detailsPhoto);
+        if(triageCompleted)
+            new SavePatientDetails().execute();
+        else // nie ma jeszcze triage do tych szczegółów
+            Toast.makeText(detailsFragment_context,"Nie nadano jeszcze priorytetu TRIAGE", Toast.LENGTH_SHORT);
 
     }
 
@@ -711,9 +761,75 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
              pDialog.dismiss();
+            triageCompleted = true;
 
         }
     }
+
+    /**
+     * Background Async Task to  Save product Details
+     * */
+    class SavePatientDetails extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(detailsFragment_context);
+            pDialog.setMessage("Saving product ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        /**
+         * Saving product
+         * */
+        protected String doInBackground(String... args) {
+
+            // Building Parameters
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair(TAG_TRIAGE_ID, triageID));
+            params.add(new BasicNameValuePair(TAG_TRIAGE_PHOTO, detailsPhoto));
+            params.add(new BasicNameValuePair(TAG_TRIAGE_COMMENT, detailsComment));
+
+            // sending modified data through http request
+            // Notice that update product url accepts POST method
+            JSONObject json = jsonParser.makeHttpRequest(url_update_triage,
+                    "POST", params);
+
+            // check json success tag
+            try {
+                int success = json.getInt(TAG_SUCCESS);
+
+                if (success == 1) {
+                    Log.i("dodano update", "OK!!!");
+                    // successfully updated
+                    //Intent i = getIntent();
+                    // send result code 100 to notify about product update
+                    //setResult(100, i);
+                    //finish();
+                } else {
+                    // failed to update product
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once product uupdated
+            pDialog.dismiss();
+        }
+    }
+
 
 
     /**
@@ -734,6 +850,21 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             //new GetPatientDetails().execute(); // pobranie parametrów pacjenta o danym NFCID
         Toast.makeText(NewActivity.this,R.string.nfcTag,Toast.LENGTH_LONG).show();
 
+    }
+
+    /**
+     * Logging out the user. Will set isLoggedIn flag to false in shared
+     * preferences Clears the user data from sqlite users table
+     * */
+    private void logoutUser() {
+        session.setLogin(false);
+
+        db.deleteUsers();
+
+        // Launching the login activity
+        Intent intent = new Intent(NewActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

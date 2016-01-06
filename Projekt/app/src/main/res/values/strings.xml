@@ -3,6 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="next">DALEJ</string>
     <string name="imie">Wpisz imie</string>
     <string name="nazwisko">Wpisz nazwisko</string>
     <string name="wiek">Wpisz wiek</string>
@@ -10,17 +11,18 @@
     <string name="hint_lastname">Nazwisko</string>
     <string name="hint_age">Wiek</string>
     <string name="buttonTekst">wprowadz</string>
-    <string name="pytanie1">Czy chodzi?</string>
-    <string name="pytanie2">Czy oddycha?</string>
+    <string name="pytanie1">Chodzi?</string>
+    <string name="pytanie2">Obecny oddech?</string>
     <string name="pytanie2cd">Oddech powrócił?</string>
     <string name="pytanie3">Oddech 8-30/min?</string>
     <string name="pytanie3cd">Tętno obecne?</string>
-    <string name="pytanie4">Nawrót kapilarny poniżej 2 sec?</string>
-    <string name="pytanie5">Czy spełnia proste polecenia?</string>
+    <string name="pytanie4">Nawrót kapilarny \u003c2s?</string>
+    <string name="pytanie5">Świadomy?</string>
     <string name="tak">TAK</string>
     <string name="nie">NIE</string>
     <string name="men">MĘŻCZYZNA</string>
     <string name="women">KOBIETA</string>
+
     <string name="longitude">długość geograficzna</string>
     <string name="latitude">szerokość geograficzna</string>
     <string name="rozmiar">rozmiar</string>
@@ -29,6 +31,10 @@
     <string name="duże">duże</string>
     <string name="opis">opis zdarzenia</string>
     <string name="nowe_zdarzenie">Dodaj zdarzenie</string>
+    <string name="no_size">Rozmiar jest wymagany</string>
+    <string name="no_longitude">Nie określono lokalizacji</string>
+    <string name="IncidentExist">Zdarzenie jest już stworzone, możesz przejść dalej</string>
+    <string name="NoIncident">Nie określono zdarzenia</string>
     <string name="uwagi">Wpisz komentarz</string>
     <string name="enter">Wprowadź</string>
 
@@ -42,6 +48,8 @@
     <string name="welcome">Welcome</string>
     <string name="btn_logout">LOGOUT</string>
     <string name="name">Fullname</string>
+    <string name="left">Leworęczny</string>
+    <string name="right">Praworęczny</string>
     <!-- Aler Dialog -->
     <string name="for_create">Dodać nowego pacjenta?</string>
     <string name="create_message">Pojawi się nowy formularz z możliwością wprowadzenia kolejnego poszkodowanego.</string>

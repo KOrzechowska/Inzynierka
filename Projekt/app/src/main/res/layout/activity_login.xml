@@ -52,18 +52,27 @@
             android:text="@string/btn_login"
             android:textColor="@color/btn_login" />
 
-        <!-- Link to Login Screen -->
-
-        <Button
-            android:id="@+id/btnLinkToRegisterScreen"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dip"
-            android:background="@null"
-            android:text="@string/btn_link_to_register"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="15dp" />
     </LinearLayout>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp"
+        android:id="@+id/Handed">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/leftHanded"
+            android:button="@drawable/custom_radio_button"
+            android:text="@string/left"/>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rightHanded"
+            android:button="@drawable/custom_radio_button"
+            android:text="@string/right"
+            android:checked="true"/>
+    </RadioGroup>
 
 </LinearLayout>

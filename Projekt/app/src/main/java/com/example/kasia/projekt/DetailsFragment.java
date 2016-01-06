@@ -13,6 +13,7 @@ import android.graphics.drawable.shapes.OvalShape;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 import android.view.GestureDetector;
@@ -20,11 +21,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +36,11 @@ import java.util.ArrayList;
  */
 public class DetailsFragment extends Fragment  implements View.OnTouchListener{
 
-    private TextView tekst;
+    public Context context;
+    //interface via which we communicate to hosting Activity
+    private ActivityCommunicator activityCommunicator;
+
+    private TextView detailsComment;
     ImageView img,imageView;
     Canvas canvas;
     Paint paint;
@@ -42,6 +50,9 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
     ArrayList<int[]> list;
     Pair glowaPwsp;
     int [] glowaWsp;
+    Button detailsToDB;
+    FrameLayout mContent;
+    String bitmapaAsString;
    // public Context context;
 
     //private String napis;
@@ -74,6 +85,19 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
 
         }else {Log.i("obraz", "nie ma");}
 
+        mContent = (FrameLayout)rootView.findViewById(R.id.obrazek);
+        detailsComment = (TextView)rootView.findViewById(R.id.comment);
+        detailsToDB = (Button)rootView.findViewById(R.id.enterDetails);
+        detailsToDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //bitmapa =  Bitmap.createBitmap (mContent.getWidth(), mContent.getHeight(), Bitmap.Config.RGB_565);;
+                if(bitmapa != null){
+                    bitmapaAsString = bitmapToBase64(Bitmap.createScaledBitmap(bitmapa,120,120,false));
+                    activityCommunicator.passDataToNewActivity(bitmapaAsString, detailsComment.getText().toString(),context );
+                }
+            }
+        });
        // addOnClickListener(rootView);
         /*Bitmap canvasBitmap = Bitmap.createBitmap(50,50, Bitmap.Config.ARGB_8888);
         Paint paint = new Paint();
@@ -92,6 +116,28 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
         return rootView;
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        context = getActivity();
+
+        activityCommunicator = (ActivityCommunicator)context;
+    }
+
+    public interface ActivityCommunicator{
+        public void passDataToNewActivity(String someValue, String comment, Context fragmentContext);
+    }
+
+    private String bitmapToBase64(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+    private Bitmap base64ToBitmap(String b64) {
+        byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+    }
 
     public void updateText(String newTekst){
        // tekst.setText(newTekst);

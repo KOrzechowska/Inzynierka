@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request.Method;
@@ -34,6 +35,8 @@ public class LoginActivity extends Activity {
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+
+    private Boolean isLeftHanded = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,25 @@ public class LoginActivity extends Activity {
 
         });
 
+        RadioGroup radioGroup = (RadioGroup)findViewById(R.id.Handed);
+        // Checked change Listener for RadioGroup 1
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.leftHanded:
+                        isLeftHanded = true;
+                        break;
+                    case R.id.rightHanded:
+                        isLeftHanded = false;
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
 
 
     }
@@ -132,6 +154,7 @@ public class LoginActivity extends Activity {
                         Intent intent = new Intent(LoginActivity.this,
                                 MainActivity.class);
                         intent.putExtra("id",id);
+                        intent.putExtra("isLeftHanded", isLeftHanded);
                         startActivity(intent);
                         finish();
                     } else {

@@ -27,6 +27,7 @@ public class TriageTypeActivity extends Activity  {
     TextView tekst1, tekst2, tekst3;
     String incidentDBid, rescuerDBid;
     private Boolean CreateFlag;
+    Boolean isLeft = false;
    /* LocationManager lm;
     Criteria kr;
     Location loc;
@@ -37,6 +38,7 @@ public class TriageTypeActivity extends Activity  {
         CreateFlag = true; // flag to create new patient
         Intent i = new Intent(this, NewActivity.class);
         i.putExtra("isAdult",isAdult);
+        i.putExtra("isLeft",  isLeft);
         i.putExtra("incidentId",incidentDBid);
         i.putExtra("rescuerId",rescuerDBid);
         i.putExtra("createFlag", CreateFlag);
@@ -52,6 +54,7 @@ public class TriageTypeActivity extends Activity  {
         if (extras != null) {
             incidentDBid = extras.getString("incidentId");
             rescuerDBid = extras.getString("rescuerId");
+            isLeft = extras.getBoolean("isLeftHanded");
 
             Log.i("index",String.valueOf(incidentDBid));}
 
@@ -59,8 +62,9 @@ public class TriageTypeActivity extends Activity  {
             ImageButton b2 = (ImageButton) findViewById(R.id.imageButton2);
             Context = getApplicationContext();
 
-       /* tekst1 = (TextView) findViewById(R.id.textView3);
-        tekst2 = (TextView) findViewById(R.id.textView4);
+       tekst1 = (TextView) findViewById(R.id.textView3);
+        tekst1.setText(incidentDBid);
+       /* tekst2 = (TextView) findViewById(R.id.textView4);
         tekst3 = (TextView) findViewById(R.id.textView5);
 
         kr=new Criteria();

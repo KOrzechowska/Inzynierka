@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.MifareClassic;
@@ -149,15 +150,23 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView;
+        Boolean leftHanded = true; // wykorzystywane tylko w tym miejscu - zmienna lokalna
 
-        View rootView = inflater.inflate(R.layout.fragment_games, container, false);
         Log.i("e2","start-e2");
         b = getArguments();
         triageKind = b.getBoolean("iAT");
+        leftHanded = b.getBoolean("iLH");
         if(b == null){
             Log.i("Received DATA", "gdzie ta dana");}
             //wynikTriage.setText("triage jest dla "+String.valueOf(Adult));}
         else Log.i("RECEIVED DATA",String.valueOf(triageKind));
+
+        if(leftHanded)
+            rootView = inflater.inflate(R.layout.fragment_triage_ql, container, false);
+        else
+            rootView = inflater.inflate(R.layout.fragment_games, container, false);
+
         tekst1 = (TextView) rootView.findViewById(R.id.text1);
         tekst2 = (TextView) rootView.findViewById(R.id.text2);
         tekst3 = (TextView) rootView.findViewById(R.id.text3);
@@ -194,6 +203,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                     triageStatus = "GREEN"; // [3]- zielony
                     Toast.makeText(getActivity(), "chodzi- TRIAGE=zielony", Toast.LENGTH_SHORT).show();
                     wynikTriage.setText("TRIAGE = " + triageStatus);
+                    wynikTriage.setBackgroundColor(Color.GREEN);
                     triagePath = "1";
                     activityCommunicator.passDataToActivity(triagePath,triageStatus, context);
                     // creating new product in background thread
@@ -251,6 +261,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         triagePath = "2";
                         Toast.makeText(getActivity(), "oddech < 8-30/min TRIAGE=czerwony", Toast.LENGTH_SHORT).show();}
                     wynikTriage.setText("TRIAGE = " + triageStatus);
+                    wynikTriage.setBackgroundColor(Color.RED);
                     activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
                 } else if (checkedId == R.id.question3rb2) {
                     //NIE- pojawia się kolejne pytanei o nawrót kapilarny
@@ -260,6 +271,8 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         triageStatus = "BLACK"; // [0]- czarny
                         Toast.makeText(getActivity(), "TRIAGE=czarny", Toast.LENGTH_SHORT).show();
                         wynikTriage.setText("TRIAGE = " + triageStatus);
+                        wynikTriage.setTextColor(Color.WHITE);
+                        wynikTriage.setBackgroundColor(Color.BLACK);
                         activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
                     } else if (!triageKind & !czyOddycha) {
                         tekst4.setText(R.string.pytanie3cd);
@@ -295,10 +308,12 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         triageStatus = "BLACK"; // [0]- czarny
                         triagePath = "8";
                         Toast.makeText(getActivity(), "brak tętna TRIAGE=czarny", Toast.LENGTH_SHORT).show();
+                        wynikTriage.setBackgroundColor(Color.BLACK);
                     } else {
                         triageStatus = "RED"; //[1]-czerwony
                         triagePath = "3";
                         Toast.makeText(getActivity(), "nawrót >2sec TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
+                        wynikTriage.setBackgroundColor(Color.RED);
                     }
 
                     wynikTriage.setText("TRIAGE = " + triageStatus);
@@ -321,10 +336,12 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         triageStatus = "RED"; // [1]- czerwony
                         triagePath = "9";
                         Toast.makeText(getActivity(), "oddech spontaniczny, TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
+                        wynikTriage.setBackgroundColor(Color.RED);
                     } else {
                         triageStatus = "YELLOW"; // [2]- zolty
                         triagePath = "4";
                         Toast.makeText(getActivity(), "świadomy, TRIAGE=żółty", Toast.LENGTH_SHORT).show();
+                        wynikTriage.setBackgroundColor(Color.YELLOW);
                     }
                     wynikTriage.setText("TRIAGE = " + triageStatus);
                     activityCommunicator.passDataToActivity(triagePath, triageStatus, context);
@@ -336,10 +353,12 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
                         triageStatus = "BLACK"; // [0]- czarny
                         triagePath = "10";
                         Toast.makeText(getActivity(), "brak tętna, TRIAGE=czarny", Toast.LENGTH_SHORT).show();
+                        wynikTriage.setBackgroundColor(Color.BLACK);
                     } else {
                         triageStatus = "RED"; // [1]- czerwony
                         triagePath = "5";
                         Toast.makeText(getActivity(), "nie świadomy, TRIAGE=czerwony", Toast.LENGTH_SHORT).show();
+                        wynikTriage.setBackgroundColor(Color.RED);
 
                     }
                     wynikTriage.setText("TRIAGE = " + triageStatus);
@@ -447,7 +466,7 @@ public class GamesFragment extends Fragment{ //implements NewActivity.FragmentCo
             }
         });*/
         statusWiek = (TextView) rootView.findViewById(R.id.textView);
-        wynikTriage = (TextView) rootView.findViewById(R.id.textView2);
+        wynikTriage = (TextView) rootView.findViewById(R.id.textView);
 
 
         return rootView;

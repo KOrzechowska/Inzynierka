@@ -37,6 +37,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends Activity implements LocationListener {
@@ -50,16 +51,19 @@ public class MainActivity extends Activity implements LocationListener {
     private TextView txtName;
     private TextView txtEmail;
 
-    String pid, rescuerId;
+    String pid, rescuerId, rescuerUID, name;
 
     // Progress Dialog
     private ProgressDialog pDialog;
 
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
-    JSONObject product;
+    JSONObject product, ratownik;
 
-
+    // single product url
+    private static final String url_rescuer_id = "http://kasia.mszulc.eu/get_rescuer.php";
+    private static final String TAG_RESCUER = "ratownik";
+    private static final String TAG_RESCUERID= "id";
 
     // single product url
     private static final String url_incident_details = "http://kasia.mszulc.eu/get_incident.php";
@@ -91,8 +95,8 @@ public class MainActivity extends Activity implements LocationListener {
     String dostawca = null;
     Context Context;
     Boolean incidentExist;
-    int incidentId=8;
     ImageButton createIncident;
+    Boolean isLeftHanded = false; // czy wybrano opcję leworęczności
 
     public void reakcja() {
         Intent i = new Intent(this, TriageTypeActivity.class);
@@ -101,6 +105,7 @@ public class MainActivity extends Activity implements LocationListener {
         else
         Log.i("idZdarzenia2","gdzie te id");
         i.putExtra("rescuerId",rescuerId);   // patients oraz triage
+        i.putExtra("isLeftHanded", isLeftHanded);
         startActivity(i);
     }
 
@@ -117,6 +122,7 @@ public class MainActivity extends Activity implements LocationListener {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             rescuerId = extras.getString("id");
+            isLeftHanded = extras.getBoolean("isLeftHanded");
         }
 
 
@@ -136,12 +142,17 @@ public class MainActivity extends Activity implements LocationListener {
         // Fetching user details from sqlite
         HashMap<String, String> user = db.getUserDetails();
 
-        String name = user.get("name");
+        name = user.get("name");
         String email = user.get("email");
+        rescuerUID = user.get("uid");
+        if(rescuerId == null){
+            new GetRescuerID().execute();
+        }
 
         // Displaying the user details on the screen
         txtName.setText(name);
         txtEmail.setText(email);
+       // Log.i("email", email);
 
         dlugosc = (TextView) findViewById(R.id.longitude);
         szerokosc = (TextView) findViewById(R.id.latitude);
@@ -169,12 +180,16 @@ public class MainActivity extends Activity implements LocationListener {
                     }
                 }
         );
+
         button2 = (Button) findViewById(R.id.button2);
         button2.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        reakcja();
+                        if(idZdarzenie != null)
+                            reakcja();
+                        else
+                            Toast.makeText(MainActivity.this, R.string.NoIncident, Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -188,8 +203,8 @@ public class MainActivity extends Activity implements LocationListener {
         tekst2.setText("" + lm.isProviderEnabled(dostawca));
 
         if (loc != null) {
-            dlugosc.setText("długość geograficzna = " + loc.getLongitude());
-            szerokosc.setText("szerokość geograficzna = " + loc.getLatitude());
+            dlugosc.setText(""+loc.getLongitude());
+            szerokosc.setText(""+loc.getLatitude());
             longitude = loc.getLongitude();
             latitude = loc.getLatitude();
         } else dlugosc.setText("nie ma wartosci!!");
@@ -204,12 +219,6 @@ public class MainActivity extends Activity implements LocationListener {
         // Getting complete product details in background thread
         new GetProductDetails().execute();
         idZdarzenieTextV.setText(idZdarzenie);
-        if(idZdarzenie==null){
-            Toast.makeText(MainActivity.this, "To zdarzenie nie jest zarejestrowane", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(MainActivity.this,"idZdarzenia = "+idZdarzenie,Toast.LENGTH_SHORT ).show();
-        }
         /**
          * obsługa guzika createIncident
          * jeśli nie ma takie zdarzenia w bazie i rozmiar zdarzenia jest uzupełniony
@@ -223,10 +232,17 @@ public class MainActivity extends Activity implements LocationListener {
                 if (idZdarzenie==null && size!=null && longitude!=null && latitude!=null){
                     description = opis.getText().toString(); // pobranie opisu wydarzenia
                     new CreateNewProduct().execute();
-                    new GetProductDetails().execute();
                     idZdarzenieTextV.setText(idZdarzenie);}
-                else
-                    Toast.makeText(MainActivity.this, "Can not create new incident", Toast.LENGTH_SHORT).show();
+                else {
+                    if(size == null)
+                        Toast.makeText(MainActivity.this, R.string.no_size, Toast.LENGTH_SHORT).show();
+                    else if(longitude == null)
+                        Toast.makeText(MainActivity.this, R.string.no_longitude, Toast.LENGTH_SHORT).show();
+                    else
+                    Toast.makeText(MainActivity.this, R.string.IncidentExist, Toast.LENGTH_SHORT).show();
+
+                }
+
             }
         });
 
@@ -369,10 +385,10 @@ public class MainActivity extends Activity implements LocationListener {
 
             Log.i("opis",description);
             // Building Parameters
-            Log.i("longitudeDB",String.format("%.4f",longitude));
+            Log.i("longitudeDB",String.format(Locale.UK,"%.4f",longitude));
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("longitude", String.format("%.4f",longitude)));
-            params.add(new BasicNameValuePair("latitude", String.format("%.4f",latitude)));
+            params.add(new BasicNameValuePair("longitude", String.format(Locale.UK,"%.4f",longitude)));
+            params.add(new BasicNameValuePair("latitude", String.format(Locale.UK,"%.4f",latitude)));
             params.add(new BasicNameValuePair("size", size));
             params.add(new BasicNameValuePair("description", description));
 
@@ -412,6 +428,8 @@ public class MainActivity extends Activity implements LocationListener {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();
+            // po każdym dodaniu zdarzenia select po jego id
+            new GetProductDetails().execute();
         }
 
     }
@@ -446,10 +464,10 @@ public class MainActivity extends Activity implements LocationListener {
                     int success;
                     try {
                         // Building Parameters
-                        Log.i("longitude",String.format("%.4f", longitude));
+                        Log.i("longitude",String.format(Locale.UK,"%.4f", longitude));
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("longitude", String.format("%.4f", longitude)));
-                        params.add(new BasicNameValuePair("latitude", String.format("%.4f", latitude)));
+                        params.add(new BasicNameValuePair("longitude", String.format(Locale.UK,"%.4f", longitude)));
+                        params.add(new BasicNameValuePair("latitude", String.format(Locale.UK,"%.4f", latitude)));
 
                         // getting product details by making HTTP request
                         // Note that product details url will use GET request
@@ -498,7 +516,97 @@ public class MainActivity extends Activity implements LocationListener {
     protected void onPostExecute(String file_url) {
         // dismiss the dialog once done
         pDialog.dismiss();
+        if(idZdarzenie==null){
+            Toast.makeText(MainActivity.this, "To zdarzenie nie jest zarejestrowane", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(MainActivity.this,"idZdarzenia = "+idZdarzenie,Toast.LENGTH_SHORT ).show();
+        }
     }
+    }
+
+    /**
+     * Background Async Task to Get complete product details
+     */
+    class GetRescuerID extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+           /* pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Pobieranie id użytkownika");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();*/
+        }
+
+        /**
+         * Getting product details in background thread
+         */
+        protected String doInBackground(String... params) {
+
+            // updating UI from Background Thread
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    // Check for success tag
+                    int success;
+                    try {
+                        // Building Parameters
+                        List<NameValuePair> params = new ArrayList<NameValuePair>();
+                        params.add(new BasicNameValuePair("unique_id", rescuerUID));
+
+                        // getting product details by making HTTP request
+                        // Note that product details url will use GET request
+                        JSONObject json = jsonParser.makeHttpRequest(
+                                url_rescuer_id, "POST", params);
+
+                        // check your log for json response
+                        Log.d("Single Product Details", json.toString());
+
+                        // json success tag
+                        success = json.getInt(TAG_SUCCESS);
+                        if (success == 1) {
+                            // successfully received product details
+                            JSONArray productObj = json
+                                    .getJSONArray(TAG_RESCUER); // JSON Array
+
+                            // get first product object from JSON Array
+                            ratownik = productObj.getJSONObject(0);
+
+                            // product with this pid found
+                            // Edit Text
+                            //  idZdarzenieTextV.setText(product.getString(TAG_ID));
+                            rescuerId=ratownik.getString(TAG_RESCUERID);
+
+                            Log.i("idZdarznie",rescuerId);
+
+
+                        } else {
+                            // product with pid not foundF
+                            Log.i("idZdarznie","nie ma zdarzenia takiego");
+                            //incidentExist=false;
+                            //new CreateNewProduct().execute();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            return null;
+        }
+        /**
+         * After completing background task Dismiss the progress dialog
+         * *
+         */
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            //pDialog.dismiss();
+            Toast.makeText(MainActivity.this,"Witaj"+name,  Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

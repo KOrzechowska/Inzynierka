@@ -13,10 +13,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
 
     private Bundle bundleF;
-    private boolean isAdult;
-    public TabsPagerAdapter(FragmentManager fm, Boolean dane) {
+    private boolean isAdult, isLeftHanded;
+    public TabsPagerAdapter(FragmentManager fm, Boolean dane, Boolean option) {
         super(fm);
         isAdult = dane;
+        isLeftHanded = option;
         Log.i("przesyłam dane", String.valueOf(isAdult));
     }
 
@@ -33,6 +34,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 Log.i("przesyłam 1", "2");
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("iAT",isAdult);
+                bundle.putBoolean("iLH", isLeftHanded);
                 GamesFragment gamesFragment = new GamesFragment();
                 gamesFragment.setArguments(bundle);
                 return gamesFragment;

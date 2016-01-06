@@ -99,11 +99,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="@string/next"
         android:id="@+id/button2"
+        android:background="@drawable/enter_button"
+        android:layout_marginBottom="45dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/tableLayout"
-        android:layout_marginBottom="59dp" />
+        android:layout_alignEnd="@+id/createIncident" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -7,11 +7,9 @@
         android:title="Create Patient" />
 
     <item android:id="@+id/menu_updateOne"
-        android:icon="@mipmap/ic_menu_save"
         android:title="Edit patient" />
 
     <item android:id="@+id/menu_logout"
-        android:icon="@mipmap/ic_menu_save"
         android:title="Logout" />
 
 </menu>
