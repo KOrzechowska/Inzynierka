@@ -26,8 +26,35 @@
 
     </FrameLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right">
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gumka"
+            android:background="@drawable/enter_button"
+            android:layout_margin="20dp"
+            android:id="@+id/gumka" />
+
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter"
+            android:id="@+id/enterDetails"
+            android:layout_toRightOf="@+id/comment"
+            android:layout_margin="20dp"
+            android:background="@drawable/enter_button"
+            />
+
+    </LinearLayout>
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="318dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:paddingLeft="20dp"
@@ -36,19 +63,9 @@
         android:hint="@string/uwagi"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:layout_gravity="fill"
         android:textColor="@color/input_login"
         android:textColorHint="@color/input_login_hint" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/enter"
-        android:id="@+id/enterDetails"
-        android:layout_gravity="right"
-        android:background="@drawable/enter_button"
-        />
 
 </LinearLayout>
     </ScrollView>

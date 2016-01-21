@@ -110,6 +110,7 @@ public class LoginActivity extends Activity {
 
     }
 
+
     /**
      * function to verify login details in mysql db
      * */
@@ -205,5 +206,8 @@ public class LoginActivity extends Activity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+    @Override
+    public void onBackPressed() {
     }
 }

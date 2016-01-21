@@ -254,9 +254,9 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:layout_weight="1"
-
                 android:layout_column="0"
                 android:layout_span="4" />
+
 
 
         </TableRow>
@@ -276,8 +276,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/tableLayout"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        android:layout_below="@+id/tableLayout" />
 
 
     >

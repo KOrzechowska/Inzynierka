@@ -16,12 +16,12 @@ import android.widget.Toast;
 public class ColorTool {
 
     /**
-     * Return true if the two colors are a pretty good match.
-     * To be a good match, all three color values (RGB) must be within the tolerance value given.
+     * Zwraca prawda jeśli dopasowano kolory
+     * Aby się dopasować wszystkie trzy kolory (RGB) muszą znaleźć się w zakresie tolerancji
      *
      * @param color1 int
      * @param color2 int
-     * @param tolerance int - the max difference that is allowed for any of the RGB components
+     * @param tolerance int - tolerancja
      * @return boolean
      */
 
@@ -29,9 +29,7 @@ public class ColorTool {
         if ((int) Math.abs (Color.red (color1) - Color.red (color2)) > tolerance ) return false;
         if ((int) Math.abs (Color.green(color1) - Color.green(color2)) > tolerance ) return false;
         if ((int) Math.abs (Color.blue(color1) - Color.blue(color2)) > tolerance ) return false;
-       // if (color2==Color.BLUE) return false;
-        //if (color2!=color1) return false;
         return true;
-    } // end match
+    }
 
-} // end class
+}

@@ -1,15 +1,20 @@
 <resources>
     <string name="app_name">mTRIAGE</string>
+    <string name="danePersonalne">DANE PERSONALNE</string>
+    <string name="triageFormularz">PYTANIE TRIAGE</string>
+    <string name="szczegolyMed">SZCZEGÓŁY</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="next">DALEJ</string>
+
     <string name="imie">Wpisz imie</string>
     <string name="nazwisko">Wpisz nazwisko</string>
     <string name="wiek">Wpisz wiek</string>
     <string name="hint_name">Imię</string>
     <string name="hint_lastname">Nazwisko</string>
     <string name="hint_age">Wiek</string>
+    <string name="no_sex">Płeć jest obowiązkowa</string>
+
     <string name="buttonTekst">wprowadz</string>
     <string name="pytanie1">Chodzi?</string>
     <string name="pytanie2">Obecny oddech?</string>
@@ -18,10 +23,21 @@
     <string name="pytanie3cd">Tętno obecne?</string>
     <string name="pytanie4">Nawrót kapilarny \u003c2s?</string>
     <string name="pytanie5">Świadomy?</string>
+    <string name="nfc_enter">Wprowadź NFC ID</string>
+    <string name="nfc_button">Własne NFC</string>
     <string name="tak">TAK</string>
     <string name="nie">NIE</string>
     <string name="men">MĘŻCZYZNA</string>
     <string name="women">KOBIETA</string>
+    <string name="triageWynik">Triage = </string>
+
+    <string name="dodanoTriage">Dodanie Triage powiodło się</string>
+    <string name="dodanoPacjenta">Dodanie poszkodowanego powiodło się</string>
+    <string name="niedodanoTriage">Dodanie triage NIE powiodło się</string>
+    <string name="niedodanoPacjenta">Dodanie pacjenta NIE powiodło się</string>
+    <string name="pacjentZnaleziony">Wczytano dane pacjenta</string>
+    <string name="pacjentNieZnaleziony">Nie znaleziono pacjenta</string>
+    <string name="dodanoSzczegol">Zapisano w DB</string>
 
     <string name="longitude">długość geograficzna</string>
     <string name="latitude">szerokość geograficzna</string>
@@ -35,8 +51,11 @@
     <string name="no_longitude">Nie określono lokalizacji</string>
     <string name="IncidentExist">Zdarzenie jest już stworzone, możesz przejść dalej</string>
     <string name="NoIncident">Nie określono zdarzenia</string>
+    <string name="next">DALEJ</string>
+
     <string name="uwagi">Wpisz komentarz</string>
     <string name="enter">Wprowadź</string>
+    <string name="gumka">Czyść</string>
 
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>

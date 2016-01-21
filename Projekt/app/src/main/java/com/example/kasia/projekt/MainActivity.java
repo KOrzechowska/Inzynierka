@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.GpsSatellite;
 import android.location.Location;
@@ -42,6 +43,7 @@ import java.util.Locale;
 
 public class MainActivity extends Activity implements LocationListener {
 
+    private Boolean hasNFCmodul;
     /**
      * logowanie - zmienne
      * db - uchwyt do bazy danych SQLite session - zarządzanie sesją
@@ -125,6 +127,7 @@ public class MainActivity extends Activity implements LocationListener {
             isLeftHanded = extras.getBoolean("isLeftHanded");
         }
 
+        hasNFCmodul = getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC);
 
         txtName = (TextView) findViewById(R.id.name);
         txtEmail = (TextView) findViewById(R.id.email);
@@ -150,8 +153,8 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
         // Displaying the user details on the screen
-        txtName.setText(name);
-        txtEmail.setText(email);
+        //txtName.setText(name);
+        //txtEmail.setText(email);
        // Log.i("email", email);
 
         dlugosc = (TextView) findViewById(R.id.longitude);
@@ -195,19 +198,22 @@ public class MainActivity extends Activity implements LocationListener {
         );
 
         kr = new Criteria();
-        lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         dostawca = lm.getBestProvider(kr, true);
         loc = lm.getLastKnownLocation(dostawca);
         lm.requestLocationUpdates(dostawca, 1000, 1, this);
-        tekst1.setText("najlepszy dostawca " + dostawca);
-        tekst2.setText("" + lm.isProviderEnabled(dostawca));
+       // tekst1.setText("najlepszy dostawca " + dostawca);
+       // tekst2.setText("" + lm.isProviderEnabled(dostawca));
 
         if (loc != null) {
-            dlugosc.setText(""+loc.getLongitude());
-            szerokosc.setText(""+loc.getLatitude());
+            dlugosc.setText("[  "+loc.getLongitude()+", ");
+            szerokosc.setText(loc.getLatitude()+"  ]");
             longitude = loc.getLongitude();
             latitude = loc.getLatitude();
-        } else dlugosc.setText("nie ma wartosci!!");
+           // onLocationChanged(loc);
+        } else {
+            dlugosc.setText("[  null,  "); szerokosc.setText("null  ]");
+        }
 
         createIncident = (ImageButton) findViewById(R.id.createIncident);
         // getting product details from intent
@@ -217,7 +223,7 @@ public class MainActivity extends Activity implements LocationListener {
         //pid = i.getStringExtra(TAG_ID);
 
         // Getting complete product details in background thread
-        new GetProductDetails().execute();
+        new GetIncidentDetails().execute();
         idZdarzenieTextV.setText(idZdarzenie);
         /**
          * obsługa guzika createIncident
@@ -284,23 +290,29 @@ public class MainActivity extends Activity implements LocationListener {
         }
     }
 
-    /**
-     * Disable NFC for this activity
-     */
+
     public void onResume() {
         super.onResume();
+       lm.requestLocationUpdates(dostawca, 1000, 1, this);
+        if(hasNFCmodul){
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);}
+
     }
 
     public void onPause() {
         super.onPause();
+        lm.removeUpdates(this);
+        if(hasNFCmodul){
         NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.disableForegroundDispatch(this);
+        nfcAdapter.disableForegroundDispatch(this);}
+        finish();
     }
 
     public void onNewIntent(Intent intent) {
+        if(hasNFCmodul)
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
             // drop NFC events
         }
@@ -313,15 +325,17 @@ public class MainActivity extends Activity implements LocationListener {
         dostawca = lm.getBestProvider(kr, true);
         loc = lm.getLastKnownLocation(dostawca);
 
-        tekst1.setText("najlepszy dostawca " + dostawca);
-        tekst2.setText("" + lm.isProviderEnabled(dostawca));
+       // tekst1.setText("najlepszy dostawca " + dostawca);
+       // tekst2.setText("" + lm.isProviderEnabled(dostawca));
 
         if (loc != null) {
-            dlugosc.setText(String.valueOf(loc.getLongitude()));
-            szerokosc.setText(String.valueOf(loc.getLatitude()));
+            dlugosc.setText("[  "+String.valueOf(loc.getLongitude())+", ");
+            szerokosc.setText(String.valueOf(loc.getLatitude())+"  ]");
             longitude = loc.getLongitude();
             latitude = loc.getLatitude();
-        } else dlugosc.setText("wciaz nie ma");
+        } else {
+            dlugosc.setText("[  null,  "); szerokosc.setText("null  ]");
+        }
     }
 
     @Override
@@ -361,12 +375,12 @@ public class MainActivity extends Activity implements LocationListener {
     }*/
 
     /**
-     * Background Async Task to Create new product
+     * Działanie w tle by stworzyć zdarzenie 
      */
     class CreateNewProduct extends AsyncTask<String, String, String> {
 
         /**
-         * Before starting background thread Show Progress Dialog
+         * Przed rozpoczęciem - okno pokazujące trającą akcję 
          */
         @Override
         protected void onPreExecute() {
@@ -379,40 +393,38 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
         /**
-         * Creating product
+         * Tworzenie zdarzenia - CREATE do bazy
          */
         protected String doInBackground(String... args) {
 
             Log.i("opis",description);
-            // Building Parameters
-            Log.i("longitudeDB",String.format(Locale.UK,"%.4f",longitude));
+            // Parametry
+            Log.i("longitudeDB",     String.format(Locale.UK,"%.2f",longitude)    );
+
+
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("longitude", String.format(Locale.UK,"%.4f",longitude)));
-            params.add(new BasicNameValuePair("latitude", String.format(Locale.UK,"%.4f",latitude)));
+            params.add(new BasicNameValuePair("longitude", String.format(Locale.UK,"%.2f",longitude)));
+            params.add(new BasicNameValuePair("latitude", String.format(Locale.UK,"%.2f",latitude)));
             params.add(new BasicNameValuePair("size", size));
             params.add(new BasicNameValuePair("description", description));
 
-            // getting JSON Object
-            // Note that create product url accepts POST method
+            // odbieranie JSONObject - odpowiedzi z bazy
             JSONObject json = jsonParser.makeHttpRequest(url_create_incident,
                     "POST", params);
 
-            // check log cat fro response
-            Log.d("Create Response", json.toString());
+            // wypisanie komunikatu w logach
+            Log.d("Create Incident", json.toString());
 
-            // check for success tag
+            // sprawdzenie czy sukces 
             try {
                 int success = json.getInt(TAG_SUCCESS);
 
                 if (success == 1) {
-                    // successfully created product
-                    Log.i("wynik", "dodano");
-
-                    // closing this screen
+                    // sukces
+                    // zamykanie okna 
 
                 } else {
-                    Log.i("wynik", "nie dodano");
-                    // failed to create product
+                    // nie udało się 
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -422,25 +434,25 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
         /**
-         * After completing background task Dismiss the progress dialog
+         * Po zakończeniu działania w tle
          * *
          */
         protected void onPostExecute(String file_url) {
-            // dismiss the dialog once done
+            // zamknięcie okna dialogowego
             pDialog.dismiss();
             // po każdym dodaniu zdarzenia select po jego id
-            new GetProductDetails().execute();
+            new GetIncidentDetails().execute();
         }
 
     }
 
     /**
-     * Background Async Task to Get complete product details
+     * Działanie w tle - pobranie id zdarzenia
      */
-    class GetProductDetails extends AsyncTask<String, String, String> {
+    class GetIncidentDetails extends AsyncTask<String, String, String> {
 
         /**
-         * Before starting background thread Show Progress Dialog
+         * Przed rozpoczęciem - pokazanie okna pracy
          */
         @Override
         protected void onPreExecute() {
@@ -453,53 +465,48 @@ public class MainActivity extends Activity implements LocationListener {
         }
 
         /**
-         * Getting product details in background thread
+         * Działanie w tle - SELECT zdarzenie 
          */
+        @SuppressWarnings("deprecation")
         protected String doInBackground(String... params) {
 
-            // updating UI from Background Thread
+            
             runOnUiThread(new Runnable() {
                 public void run() {
-                    // Check for success tag
+                    
                     int success;
                     try {
-                        // Building Parameters
-                        Log.i("longitude",String.format(Locale.UK,"%.4f", longitude));
+                        // Parametry
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
-                        params.add(new BasicNameValuePair("longitude", String.format(Locale.UK,"%.4f", longitude)));
-                        params.add(new BasicNameValuePair("latitude", String.format(Locale.UK,"%.4f", latitude)));
+                        params.add(new BasicNameValuePair("longitude", String.format(Locale.UK,"%.2f", longitude)));
+                        params.add(new BasicNameValuePair("latitude", String.format(Locale.UK,"%.2f", latitude)));
 
-                        // getting product details by making HTTP request
-                        // Note that product details url will use GET request
+                        // pobranie JSONObcject - odpowiedzi od serwera 
                         JSONObject json = jsonParser.makeHttpRequest(
                                 url_incident_details, "POST", params);
 
-                        // check your log for json response
+                        // wyświetlenie w logach wiadomości
                         Log.d("Single Product Details", json.toString());
 
-                        // json success tag
+                        // json tag sukcesu 
                         success = json.getInt(TAG_SUCCESS);
                         if (success == 1) {
-                            // successfully received product details
+                            // pobrano id 
                             JSONArray productObj = json
                                     .getJSONArray(TAG_INCIDENT); // JSON Array
-
-                            // get first product object from JSON Array
+                            
                             product = productObj.getJSONObject(0);
 
-                            // product with this pid found
+                            // przypisanie id do zmiennej
                             // Edit Text
                                //  idZdarzenieTextV.setText(product.getString(TAG_ID));
                             idZdarzenie=product.getString(TAG_ID);
-
                                 Log.i("idZdarznie",idZdarzenie);
 
 
                         } else {
-                            // product with pid not foundF
+                            // nie znaleziono
                             Log.i("idZdarznie","nie ma zdarzenia takiego");
-                            //incidentExist=false;
-                            //new CreateNewProduct().execute();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -510,18 +517,12 @@ public class MainActivity extends Activity implements LocationListener {
             return null;
         }
         /**
-     * After completing background task Dismiss the progress dialog
-     * *
-     */
+        * Dzaiłanie w tle zakończoe 
+        * *
+        */
     protected void onPostExecute(String file_url) {
-        // dismiss the dialog once done
+        // okno dialogowe zamknięte 
         pDialog.dismiss();
-        if(idZdarzenie==null){
-            Toast.makeText(MainActivity.this, "To zdarzenie nie jest zarejestrowane", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Toast.makeText(MainActivity.this,"idZdarzenia = "+idZdarzenie,Toast.LENGTH_SHORT ).show();
-        }
     }
     }
 

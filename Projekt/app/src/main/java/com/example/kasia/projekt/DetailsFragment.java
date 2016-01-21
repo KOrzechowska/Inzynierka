@@ -98,6 +98,15 @@ public class DetailsFragment extends Fragment  implements View.OnTouchListener{
                 }
             }
         });
+        Button gumka = (Button)rootView.findViewById(R.id.gumka);
+        gumka.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageView.setImageResource(R.mipmap.ic_checkboxmen);
+                glowaP = false; reka2P = false; reka1P = false; brzuch = false; glowaT = false; reka1T = false; reka2T = false;
+                        plecy=false; noga1T=false;noga2T=false;
+            }
+        });
        // addOnClickListener(rootView);
         /*Bitmap canvasBitmap = Bitmap.createBitmap(50,50, Bitmap.Config.ARGB_8888);
         Paint paint = new Paint();

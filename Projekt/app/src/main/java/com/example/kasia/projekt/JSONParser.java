@@ -48,6 +48,8 @@ public class JSONParser {
             if(method == "POST"){
                 // request method is POST
                 // defaultHttpClient
+
+
                 DefaultHttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost(url);
                 httpPost.setEntity(new UrlEncodedFormEntity(params));
@@ -87,14 +89,16 @@ public class JSONParser {
             is.close();
             json = sb.toString();
         } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
+            Log.e("Buffer Error", "Error podczas konwersji " + e.toString());
         }
 
         // try parse the string to a JSON object
+
+
         try {
             jObj = new JSONObject(json);
         } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
+            Log.e("JSON Parser", "Error parsowania danych " + e.toString());
         }
 
         // return JSON String

@@ -3,6 +3,7 @@ package com.example.kasia.projekt;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -10,7 +11,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.MifareClassic;
@@ -22,14 +26,23 @@ import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,12 +61,14 @@ import java.util.UUID;
 /**
  * Created by kasia on 30.08.15.
  */
-public class NewActivity extends FragmentActivity implements ActionBar.TabListener, TopRatedFragment.OnFragmentInteractionListener,GamesFragment.ActivityCommunicator, DetailsFragment.ActivityCommunicator {
+public class NewActivity extends AppCompatActivity implements TopRatedFragment.OnFragmentInteractionListener,TriageQuestionFragment.ActivityCommunicator, DetailsFragment.ActivityCommunicator {
 
 
     private SessionManager session; // session - przechowywanie na zew informacji o użytkowniku
     private SQLiteHandler db; // android baza SQLite
 
+    private Boolean hasNFCmodul; // czy smartphone wspiera technologię NFC
+    Button nfcButton; EditText nfcText;
     String nfcID = null;
 
     Context fragment_context, detailsFragment_context;
@@ -94,6 +109,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     private Boolean EditFlag = false, CreateFlag, EditTriageStatus = false, triageCompleted = false;
     private String idPatient, namePatient, lastNamePatient, sexPatient, photoPatient; // patient id from database
 
+    private Boolean dodanoPacjenta = false;
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
    // public FragmentCommunicator fragmentCommunicator;
@@ -133,7 +149,8 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_activity);
+        setContentView(R.layout.activity_triage);
+
         Log.i("new activity", "start");
         Boolean isLeftHanded; // wykorzystywane tylko do przesłania dalej do fragmentu z pytaniami
         Bundle extras = getIntent().getExtras();
@@ -152,10 +169,43 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         // SqLite database handler
         db = new SQLiteHandler(getApplicationContext());
 
+
+        ///////////////////////////////////////////
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.danePersonalne));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.triageFormularz));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.szczegolyMed));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final TabsPagerAdapter adapter = new TabsPagerAdapter
+                (getSupportFragmentManager(),isAdultTriage, isLeftHanded);
+
+        viewPager.setAdapter(adapter);
+
+        viewPager.setOffscreenPageLimit(2);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+        //////////////////////////////////////////////
+
         //Bundle bundle = new Bundle();
         //bundle.putString("isAdult",String.valueOf(isPatientMen));
         // Initilization
-        viewPager = (ViewPager) findViewById(R.id.pager);
+       /* viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setOffscreenPageLimit(2);
         actionBar = getActionBar();
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager(),isAdultTriage, isLeftHanded);
@@ -174,7 +224,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         /**
          * on swiping the viewpager make respective tab selected
          * */
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        /*viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageSelected(int position) {
@@ -192,50 +242,65 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             @Override
             public void onPageScrollStateChanged(int arg0) {
             }
-        });
+        });*/
 
-        
+        hasNFCmodul = getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC);
+
     }
     @Override
     public void onResume() {
         super.onResume();
-       // creating pending intent:
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        // creating intent receiver for NFC events:
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(NfcAdapter.ACTION_TAG_DISCOVERED);
-        filter.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        filter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
-        // enabling foreground dispatch for getting intent from NFC event:
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, new IntentFilter[]{filter}, this.techList);
+        if(hasNFCmodul) {
+            // creating pending intent:
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new
+                    Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+            // creating intent receiver for NFC events:
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(NfcAdapter.ACTION_TAG_DISCOVERED);
+            filter.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            filter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
+            // enabling foreground dispatch for getting intent from NFC event:
+            NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+
+            nfcAdapter.enableForegroundDispatch(this, pendingIntent,null, null);
+
+
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        // disabling foreground dispatch:
-       NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.disableForegroundDispatch(this);
+        if(hasNFCmodul) {
+            // disabling foreground dispatch:
+            NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+            nfcAdapter.disableForegroundDispatch(this);
+        }
+
+
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if (patientPhoto!=null & CreateFlag == true & intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
-            nfcID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-            ((TextView)findViewById(R.id.textView2)).setText(
-                    "NFC Tag\n" + nfcID);
-            new CreateNewPatient().execute();
-            Log.i("nfcID1:", nfcID);
-            new GetPatientDetails().execute();
-        }
-        if(EditFlag == true & intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+        if(hasNFCmodul) {
+            if (patientPhoto != null & CreateFlag &
+                    intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+                nfcID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+                ((TextView) findViewById(R.id.textView2)).setText(
+                        "NFC Tag\n" + nfcID);
+                // rejestracja nowego pacjenta
+                new CreateNewPatient().execute();
+                Log.i("nfcID1:", nfcID);
+            }
+            if (EditFlag & intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
 
-            nfcID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-            ((TextView)findViewById(R.id.textView2)).setText(
-                    "NFC Tag\n" + nfcID);
-
-            new GetPatientDetails().execute(); // pobranie parametrów pacjenta o danym NFCID
+                nfcID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+                ((TextView) findViewById(R.id.textView2)).setText(
+                        "NFC Tag\n" + nfcID);
+                // pobranie parametrów pacjenta o danym NFCID
+                new GetPatientDetails().execute();
+            }
         }
     }
 
@@ -269,7 +334,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
 
     }
 
-    @Override
+   /* @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
     }
 
@@ -282,7 +347,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-    }
+    }*/
 
    /* public interface FragmentCommunicator{
         public void passDataToFragment(String imie, String nazwisko,Boolean plec,Boolean someValue);
@@ -376,13 +441,23 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         triagePath = someValue;
         Log.i("tekst4",triagePath+firstName+lastName+sex);
         fragment_context = fragmentContext;
+        // jest wynik i w zalezności od obecności moduł NFC
+        Log.i("nfcmodul",hasNFCmodul.toString());
+
+       /* if( hasNFCmodul == false & EditFlag == true){
+            Dialog dialog = createInputDialog();
+            dialog.show();
+       }*/
+
         //creating new patient in background thread
         // conditions: photo, createFlag == true, and TODO: NFC tag ID
-        if (patientPhoto!=null & CreateFlag == true & nfcID != null){
-
+        if( hasNFCmodul == false)
+        if (patientPhoto!=null & CreateFlag == true){
+            Dialog dialog = createInputDialog();
+            dialog.show();
             Toast.makeText(NewActivity.this,"Priorytet poszkodowanego: "+priority + "\n"+R.string.nfcTag,Toast.LENGTH_LONG).show();
             // new CreateNewPatient().execute();
-            Log.i("nfcID1:", nfcID);
+            //Log.i("nfcID1:", nfcID);
             //new GetPatientDetails().execute();
         }
         else Log.i("zdjecie","gdzie ono");
@@ -417,17 +492,18 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
      */
     class CreateNewPatient extends AsyncTask<String, String, String> {
 
+
         /**
          * Before starting background thread Show Progress Dialog
          */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(fragment_context);
+           /* pDialog = new ProgressDialog(fragment_context);
             pDialog.setMessage("Creating Product..");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
-            pDialog.show();
+            pDialog.show();*/
         }
     /**
      * Creating product
@@ -468,6 +544,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             if (success == 1) {
                 // successfully created product
                 Log.i("wynik", "dodano");
+                dodanoPacjenta = true;
 
                 // closing this screen
 
@@ -489,7 +566,9 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
     protected void onPostExecute(String file_url) {
        // AddPatientSuccess=1;
         // dismiss the dialog once done
-        pDialog.dismiss();
+        //pDialog.dismiss();
+        if(dodanoPacjenta)
+        new GetPatientDetails().execute();
     }
 
 }
@@ -499,6 +578,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
      */
     class GetPatientDetails extends AsyncTask<String, String, String> {
 
+        int pobrano = 0;
         /**
          * Before starting background thread Show Progress Dialog
          */
@@ -515,59 +595,51 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         /**
          * Getting patient details in background thread
          */
-        protected String doInBackground(String... params) {
+        @SuppressWarnings("deprecation")
+        protected String doInBackground(String... args) {
+
 
             // updating UI from Background Thread
-            runOnUiThread(new Runnable() {
-                public void run() {
+            //runOnUiThread(new Runnable() {
+              //public void run() {
                     // Check for success tag
                     int success;
                     try {
                         // Building Parameters
-                        Log.i("nfcID", nfcID);
-                        //nfcID = "40402B6C";
                         List<NameValuePair> params = new ArrayList<NameValuePair>();
                         params.add(new BasicNameValuePair("nfcID", nfcID));
+                        params.add(new BasicNameValuePair("incidentId", incidentId));
 
                         // getting product details by making HTTP request
-                        // Note that product details url will use GET request
                         JSONObject json = jsonParser.makeHttpRequest(
                                 url_patient_details, "POST", params);
-
                         // check your log for json response
                         Log.d("Single Product Details", json.toString());
-
                         // json success tag
                         success = json.getInt(TAG_SUCCESS);
                         if (success == 1) {
-                            // successfully received product details
+                            // successfully received patient details
                             JSONArray productObj = json
                                     .getJSONArray(TAG_PATIENT); // JSON Array
 
-                            // get first product object from JSON Array
+                            // get first patient object from JSON Array
                             patientDetails = productObj.getJSONObject(0);
-
                             // patient details extracted from DB
                             idPatient = patientDetails.getString(TAG_ID);
                             namePatient = patientDetails.getString(TAG_FIRSTNAME);
                             lastNamePatient = patientDetails.getString(TAG_LASTNAME);
                             sexPatient = patientDetails.getString(TAG_SEX);
                             photoPatient = patientDetails.getString(TAG_PHOTO);
-
-                            Log.i("idPatient", idPatient);
-
-
+                            pobrano = 1;
                         } else {
-                            // product with pid not foundF
-                            Log.i("idPatient", "nie ma zdarzenia takiego");
-                            //incidentExist=false;
-                            //new CreateNewProduct().execute();
+                            // patient found
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-            });
+
+               // }
+            //});
 
             return null;
         }
@@ -578,35 +650,62 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         protected void onPostExecute(String file_url) {
             nfcID = null;
             // dismiss the dialog once done
+
            // pDialog.dismiss();
-            Log.i("patientID from GET", idPatient);
+            if(pobrano==1 & EditFlag){
+                Toast.makeText(getApplication(), R.string.pacjentZnaleziony, Toast.LENGTH_SHORT).show();
+            Log.i("patientID from GET", idPatient);}
+            else
+                Toast.makeText(getApplication(), R.string.pacjentNieZnaleziony, Toast.LENGTH_SHORT).show();
             Log.i("create flag", CreateFlag.toString());
-            if(EditFlag){
+            if(EditFlag & pobrano == 1){ // jeśli nie poprano to nie ma co wypisać
                 TextView firstName_textFragment1 = (TextView)findViewById(R.id.input_name);
                 TextView lastName_textFragment1 = (TextView)findViewById(R.id.input_lastname);
                 firstName_textFragment1.setText(namePatient);
                 lastName_textFragment1.setText(lastNamePatient);
+                RadioButton women_fragment1 = (RadioButton)findViewById(R.id.women_rbn);
+                RadioButton men_fragment1 = (RadioButton)findViewById(R.id.men_rbn);
+                if(sexPatient == "M")
+                    men_fragment1.setChecked(true);
+                else if(sexPatient == "F")
+                    women_fragment1.setChecked(true);
+                ImageView i_fragment1 = (ImageView)findViewById(R.id.imageView);
+                Bitmap bitmapa = base64ToBitmap(photoPatient);
+                i_fragment1.setImageBitmap(bitmapa);
                 RadioGroup rgQ1_Fragment2 = (RadioGroup)findViewById(R.id.rgCzyChodzi);
                 RadioGroup rgQ2_Fragment2 = (RadioGroup)findViewById(R.id.rgCzyOddycha);
                 RadioGroup rgQ3_Fragment2 = (RadioGroup)findViewById(R.id.rgQuestion3);
                 RadioGroup rgQ4_Fragment2 = (RadioGroup)findViewById(R.id.rgQuestion4);
                 RadioGroup rgQ5_Fragment2 = (RadioGroup)findViewById(R.id.rgQuestion5);
                 rgQ1_Fragment2.clearCheck();
-                rgQ2_Fragment2.clearCheck();
-                rgQ3_Fragment2.clearCheck();
-                rgQ4_Fragment2.clearCheck();
-                rgQ5_Fragment2.clearCheck();
+                rgQ2_Fragment2.clearCheck(); rgQ2_Fragment2.setVisibility(View.INVISIBLE);
+                rgQ3_Fragment2.clearCheck(); rgQ3_Fragment2.setVisibility(View.INVISIBLE);
+                rgQ4_Fragment2.clearCheck(); rgQ4_Fragment2.setVisibility(View.INVISIBLE);
+                rgQ5_Fragment2.clearCheck(); rgQ5_Fragment2.setVisibility(View.INVISIBLE);
+                TextView wynikTriage_fragment2 = (TextView) findViewById(R.id.textView);
+                wynikTriage_fragment2.setText(""); wynikTriage_fragment2.setBackgroundColor(Color.WHITE);
+                ImageView  imageView = (ImageView)findViewById(R.id.image);
+                imageView.setImageResource(R.mipmap.ic_checkboxmen);
+                TextView detailsComment = (TextView)findViewById(R.id.comment);
+                detailsComment.setText("");
                 EditTriageStatus = true;
             }else if(CreateFlag){
                 new AddNewTriageRecord().execute();
             }
         }
+
+
     }
 
+    public Bitmap base64ToBitmap(String b64) {
+        byte[] imageAsBytes = Base64.decode(b64.getBytes(), Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+    }
     /**
      * Background Async Task to Create new product
      */
     class AddNewTriageRecord extends AsyncTask<String, String, String> {
+        int dodano = 0;
 
         /**
          * Before starting background thread Show Progress Dialog
@@ -651,6 +750,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
 
                     // successfully created product
                     Log.i("wynik", "dodano");
+                    dodano = 1;
 
                     // closing this screen
 
@@ -673,6 +773,10 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             // AddPatientSuccess=1;
             // dismiss the dialog once done
             pDialog.dismiss();
+            if(dodano == 1)
+                Toast.makeText(fragment_context,R.string.dodanoTriage, Toast.LENGTH_SHORT ).show();
+            else
+                Toast.makeText(fragment_context,R.string.niedodanoTriage, Toast.LENGTH_SHORT ).show();
             CreateFlag = false; // utworzono pacjenta - aby wybrać kolejnego nalezy skorzystać z menu
             EditFlag = false; // dodano nowy rekod dla pacjenta
             EditTriageStatus = false;
@@ -702,11 +806,12 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         /**
          * Getting last triage details in background thread
          */
-        protected String doInBackground(String... params) {
+        @SuppressWarnings("deprecation")
+        protected String doInBackground(String... args) {
 
             // updating UI from Background Thread
-            runOnUiThread(new Runnable() {
-                public void run() {
+           // runOnUiThread(new Runnable() {
+             //   public void run() {
                     // Check for success tag
                     int success;
                     try {
@@ -749,8 +854,8 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-            });
+               // }
+            //});
 
             return null;
         }
@@ -771,6 +876,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
      * */
     class SavePatientDetails extends AsyncTask<String, String, String> {
 
+        int zapisano = 0;
         /**
          * Before starting background thread Show Progress Dialog
          * */
@@ -806,6 +912,7 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
 
                 if (success == 1) {
                     Log.i("dodano update", "OK!!!");
+                    zapisano = 1;
                     // successfully updated
                     //Intent i = getIntent();
                     // send result code 100 to notify about product update
@@ -827,6 +934,8 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once product uupdated
             pDialog.dismiss();
+            if(zapisano==1)
+                Toast.makeText(getApplication(), R.string.dodanoSzczegol, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -849,6 +958,10 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
             EditFlag = true; // flag to edit patient triage status
             //new GetPatientDetails().execute(); // pobranie parametrów pacjenta o danym NFCID
         Toast.makeText(NewActivity.this,R.string.nfcTag,Toast.LENGTH_LONG).show();
+        if( hasNFCmodul == false & EditFlag == true){
+            Dialog dialog = createInputDialog();
+            dialog.show();
+        }
 
     }
 
@@ -865,6 +978,41 @@ public class NewActivity extends FragmentActivity implements ActionBar.TabListen
         Intent intent = new Intent(NewActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private Dialog createInputDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("NFC ID");
+        builder.setMessage("Wprowadź ID tagu NFC:");
+
+        // Use an EditText view to get user input.
+        final EditText input = new EditText(this);
+        input.setId(0);
+        builder.setView(input);
+
+        builder.setPositiveButton("Wprowadź", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                nfcID = input.getText().toString();
+                if(patientPhoto!=null & CreateFlag == true)
+                    new CreateNewPatient().execute();
+                if(EditFlag)
+                    new GetPatientDetails().execute();
+                return;
+            }
+        });
+
+        builder.setNegativeButton("Anuluj", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+
+        return builder.create();
     }
 
 }

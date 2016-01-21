@@ -35,9 +35,9 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("iAT",isAdult);
                 bundle.putBoolean("iLH", isLeftHanded);
-                GamesFragment gamesFragment = new GamesFragment();
-                gamesFragment.setArguments(bundle);
-                return gamesFragment;
+                TriageQuestionFragment TriageQuestionFragment = new TriageQuestionFragment();
+                TriageQuestionFragment.setArguments(bundle);
+                return TriageQuestionFragment;
             case 2:
                 Log.i("przesyłam 1", "3");
                 // Movies fragment activity
@@ -55,8 +55,5 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         return 3;
     }
 
-    public void setArgument (Bundle bundle){
-        bundleF = bundle;
-    }
 
 }

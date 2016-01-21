@@ -31,7 +31,7 @@ import java.io.ByteArrayOutputStream;
 public class TopRatedFragment extends Fragment {
 
     private EditText edText1,edText2,edText3;
-    private Button btn, b;
+    private Button b;
     ImageView i;
     Bitmap bitmap = null;
     String bitmapAsString;
@@ -73,8 +73,11 @@ public class TopRatedFragment extends Fragment {
         View.OnClickListener l = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(photo,1);
+                if(sex != null) {
+                    Intent photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(photo, 1);
+                }else
+                    Toast.makeText(getActivity(), R.string.no_sex, Toast.LENGTH_SHORT).show();
 
             }
         };
@@ -84,7 +87,7 @@ public class TopRatedFragment extends Fragment {
         edText1 = (EditText)rootView.findViewById(R.id.input_name);
         edText2 = (EditText)rootView.findViewById(R.id.input_lastname);
        // edText3 = (EditText)rootView.findViewById(R.id.input_age);
-        btn = (Button)rootView.findViewById(R.id.button);
+
         sex_rbt = (RadioGroup) rootView.findViewById(R.id.sex);
 
         // Checked change Listener for RadioGroup 1
@@ -111,19 +114,6 @@ public class TopRatedFragment extends Fragment {
         //edText2.addTextChangedListener(new MyTextWatcher(edText2));
        // edText3.addTextChangedListener(new MyTextWatcher(edText3));
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buttonClicked(view);
-                /*firstName = edText1.getText().toString();
-                lastName = edText2.getText().toString();
-                age = edText3.getText().toString();
-                Log.i("tekst1",firstName);
-                Log.i("tekst2",lastName);
-                Log.i("tekst3",age);*/
-
-            }
-        });
         return rootView;
     }
 
